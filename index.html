@@ -295,6 +295,59 @@ body.mobile .crow .cl{color:var(--m-ink)}
 .ctip .th{margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.12);
   font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;color:#7d8fa0}
 
+
+/* ---- discussion ---- */
+.thread{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.cmt{display:flex;gap:10px}
+.av{width:30px;height:30px;border-radius:50%;flex:none;background:var(--accent-soft2);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;letter-spacing:.02em}
+.av.me{background:var(--accent);color:#fff}
+.cb{flex:1;min-width:0}
+.ch{display:flex;gap:8px;align-items:baseline;margin-bottom:3px}
+.ch b{font-size:12.5px;font-weight:650}
+.ch span{font-size:11px;color:var(--muted)}
+.ch .cx{margin-left:auto;border:none;background:none;color:var(--muted);cursor:pointer;
+  font-size:11px;padding:1px 4px;border-radius:5px;opacity:0;transition:opacity .12s}
+.cmt:hover .ch .cx{opacity:1}
+.ch .cx:hover{background:var(--accent-soft);color:var(--ink)}
+.ct{font-size:13px;line-height:1.5;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+.composer{display:flex;gap:10px;align-items:flex-start;border-top:1px solid var(--ring);padding-top:12px}
+.composer textarea{flex:1;border:1px solid var(--ring);background:var(--field);color:var(--ink);
+  border-radius:10px;padding:9px 11px;font:inherit;font-size:13px;resize:vertical;min-height:44px}
+.composer textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+body.mobile .cb{min-width:0}
+body.mobile .composer{padding-top:10px}
+body.mobile .ct{color:var(--m-ink)}
+body.mobile .av{background:var(--accent);color:#fff}
+
+/* ---- submission plan ---- */
+.planbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.planbar select,.planbar input{min-width:150px}
+table.ptbl{width:100%;border-collapse:collapse;font-size:12px}
+table.ptbl th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);padding:5px 7px;border-bottom:1px solid var(--grid)}
+table.ptbl td{padding:5px 7px;border-bottom:1px solid var(--grid);vertical-align:middle}
+table.ptbl select,table.ptbl input{padding:4px 7px;font-size:12px;border-radius:7px;
+  border:1px solid var(--ring);background:var(--field);color:var(--ink);width:100%}
+.alist{display:flex;gap:7px;flex-wrap:wrap}
+.atag{background:var(--surface2);border:1px solid var(--ring);border-radius:20px;
+  padding:4px 11px;font-size:12px;font-weight:600}
+.atag i{font-style:normal;color:var(--muted);font-weight:400;margin-left:6px;font-size:11px}
+.cbadge{display:inline-block;min-width:16px;padding:0 4px;border-radius:9px;background:var(--accent);
+  color:#fff;font-size:9.5px;font-weight:700;line-height:15px;text-align:center;margin-left:6px}
+
+.picker{max-height:46vh;overflow:auto;border:1px solid var(--ring);border-radius:10px}
+.pk{display:flex;gap:9px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--grid);
+  cursor:pointer;font-size:12px}
+.pk:last-child{border-bottom:none}
+.pk:hover{background:var(--accent-soft)}
+.pk input{flex:none}
+.pk .pn{font-family:var(--mono);font-size:11px;color:var(--ink2);flex:none;width:172px}
+.pk .pt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pk .pdc{flex:none;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+@media(max-width:820px){.pk .pn{width:auto;flex:1}.pk .pt{display:none}}
+
 /* ---- printed report ---- */
 #printroot{display:none}
 @media screen{ body.printing #printroot{display:none} }
@@ -558,6 +611,7 @@ body.mobile .panel h3{font-size:9.5px;font-weight:700;letter-spacing:.11em;text-
   <div class="title">As-Built Tracker<small id="projsub">IWTP2</small></div>
   <button class="tbbtn" id="b-reg">▦ Register</button>
   <button class="tbbtn" id="b-dash">◔ Dashboard</button>
+  <button class="tbbtn" id="b-plan">Plan</button>
   <button class="tbbtn" id="b-undo" title="Undo (Ctrl+Z)">↶</button>
   <button class="tbbtn" id="b-redo" title="Redo (Ctrl+Y)">↷</button>
   <div class="spacer"></div>
@@ -658,7 +712,7 @@ const today=new Date().toISOString().slice(0,10);
 const SHORT_DISC={'Instrumentation and Control':'I&C','General and/or Multidisciplinary':'General',
   'Earthworks and Geotechnical':'Earthworks','Structural and Supports':'Structural',
   'Testing and commissioning':'Testing'};
-const BUILD='2026-08-14 · b18';
+const BUILD='2026-08-14 · b21';
 const SNAPSHOT=[{"docNo":"IWTP02-GNR-00-BDO-00001","title":"Excavation drawings - Pumping station area","discipline":"Earthworks and Geotechnical","currentRev":"","status":"Not Submitted","targetDate":"2026-02-10","actualSub":"","actualRcv":"","id":1,"sn":"1"},{"docNo":"IWTP02-GNR-00-CDL-00001","title":"Road Crossing (Tunnelling) Details","discipline":"Civil","currentRev":"","status":"Not Submitted","targetDate":"2026-03-12","actualSub":"","actualRcv":"","id":2,"sn":"2"},{"docNo":"IWTP02-GNR-00-CDS-00001","title":"Chlorination shelter - Steel Drawings","discipline":"Civil","currentRev":"1X","status":"W","targetDate":"2026-02-15","actualSub":"2026-08-10","actualRcv":"","id":3,"sn":"3"},{"docNo":"IWTP02-GNR-00-EDU-00001","title":"Safe current DC & AC Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-23","actualSub":"2026-06-06","actualRcv":"2026-06-18","id":4,"sn":"4"},{"docNo":"IWTP02-GNR-00-EDU-00002","title":"LV Single Line Diagrams - Auxiliary panels","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-15","actualSub":"2026-06-03","actualRcv":"2026-06-18","id":5,"sn":"5"},{"docNo":"IWTP02-GNR-00-EDU-00003","title":"Overall single line diagram","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-30","actualSub":"2026-05-23","actualRcv":"2026-06-13","id":6,"sn":"6"},{"docNo":"IWTP02-GNR-00-EDW-00003","title":"110 kV HV Cable routing","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-02-25","actualSub":"","actualRcv":"","id":7,"sn":"7"},{"docNo":"IWTP02-GNR-00-ELE-00001","title":"Electrical Load List","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-05","actualSub":"2026-08-08","actualRcv":"","id":8,"sn":"8"},{"docNo":"IWTP02-GNR-00-ELI-00001","title":"Electrical Signal List","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-28","actualSub":"","actualRcv":"","id":9,"sn":"9"},{"docNo":"IWTP02-GNR-00-IDA-00001","title":"Telecomunications System - Equipment location layout","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-23","actualSub":"","actualRcv":"","id":10,"sn":"10"},{"docNo":"IWTP02-GNR-00-IDG-00001","title":"Control System Architecture Drawing","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-17","actualSub":"","actualRcv":"","id":11,"sn":"11"},{"docNo":"IWTP02-GNR-00-IDG-00002","title":"Cause and Effect Matrix","discipline":"Instrumentation and Control","currentRev":"0X","status":"C","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-07","id":12,"sn":"12"},{"docNo":"IWTP02-GNR-00-IDT-00001","title":"Instrument Hook Up Drawing","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-06","actualSub":"","actualRcv":"","id":13,"sn":"13"},{"docNo":"IWTP02-GNR-00-IDW-00001","title":"Detailed Fiber Optic Wiring Diagrams","discipline":"Instrumentation and Control","currentRev":"0X","status":"C","targetDate":"2026-05-25","actualSub":"2026-08-01","actualRcv":"2026-08-07","id":14,"sn":"14"},{"docNo":"IWTP02-GNR-00-IDW-00002","title":"Communication cable layout at DWTSO, dispatcher and SWPC","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-16","actualSub":"","actualRcv":"","id":15,"sn":"15"},{"docNo":"IWTP02-GNR-00-ILK-00001","title":"I&C Hardwired Cables List","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-04-16","actualSub":"","actualRcv":"","id":16,"sn":"16"},{"docNo":"IWTP02-GNR-00-ILK-00002","title":"Communication Cables List","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-01","actualSub":"","actualRcv":"","id":17,"sn":"17"},{"docNo":"IWTP02-GNR-00-ILP-00001","title":"DCS Hardwired I/O List","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-04-08","actualSub":"","actualRcv":"","id":18,"sn":"18"},{"docNo":"IWTP02-GNR-00-ILP-00002","title":"DCS Communicated I/O List","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-21","actualSub":"","actualRcv":"","id":19,"sn":"19"},{"docNo":"IWTP02-GNR-00-ILP-00004","title":"Instrument List","discipline":"Instrumentation and Control","currentRev":"1X","status":"B","targetDate":"2026-05-27","actualSub":"2026-06-28","actualRcv":"2026-07-14","id":20,"sn":"20"},{"docNo":"IWTP02-GNR-00-ILP-00005","title":"Junction Boxes List","discipline":"Instrumentation and Control","currentRev":"1X","status":"B","targetDate":"2026-05-12","actualSub":"2026-07-11","actualRcv":"2026-07-23","id":21,"sn":"21"},{"docNo":"IWTP02-GNR-00-MDL-00001","title":"Automatic vent stations - IFC Guide drawing","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-06-20","actualSub":"","actualRcv":"","id":22,"sn":"22"},{"docNo":"IWTP02-GNR-00-MDL-00002","title":"Drain chamber stations \u2013 IFC Guide drawing","discipline":"Mechanical","currentRev":"0X","status":"B","targetDate":"2026-06-20","actualSub":"2026-05-17","actualRcv":"2026-06-02","id":23,"sn":"23"},{"docNo":"IWTP02-GNR-00-MDL-00003","title":"Washout chamber stations - IFC Guide drawing","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-06-20","actualSub":"","actualRcv":"","id":24,"sn":"24"},{"docNo":"IWTP02-GNR-00-MDL-00004","title":"Rayis and Rabigh Shafts - IFC Guide Drawing","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-06-30","actualSub":"","actualRcv":"","id":25,"sn":"25"},{"docNo":"IWTP02-GNR-00-MLL-00001","title":"Lines list","discipline":"Mechanical","currentRev":"1X","status":"B","targetDate":"2026-05-10","actualSub":"2026-06-29","actualRcv":"2026-07-01","id":26,"sn":"26"},{"docNo":"IWTP02-GNR-00-MLL-00002","title":"List of special pipe items","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":27,"sn":"27"},{"docNo":"IWTP02-GNR-00-MLP-00001","title":"Mechanical equipment list","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":28,"sn":"28"},{"docNo":"IWTP02-GNR-00-MLV-00001","title":"Valves list","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":29,"sn":"29"},{"docNo":"IWTP02-GNR-00-PDD-00002","title":"Rayis - P&ID Diagram","discipline":"Process","currentRev":"1X","status":"B","targetDate":"2026-03-10","actualSub":"2026-06-30","actualRcv":"2026-07-01","id":30,"sn":"30"},{"docNo":"IWTP02-GNR-00-PDP-00001","title":"System Flow Diagram","discipline":"Process","currentRev":"1X","status":"B","targetDate":"2026-02-25","actualSub":"2026-06-29","actualRcv":"2026-07-01","id":31,"sn":"31"},{"docNo":"IWTP02-GNR-00-PLA-00001","title":"Alarm and Set Point List","discipline":"Process","currentRev":"0X","status":"C","targetDate":"2026-05-15","actualSub":"2026-07-30","actualRcv":"2026-08-07","id":32,"sn":"32"},{"docNo":"IWTP02-GNR-00-SDS-00001","title":"Rayis, Rabigh, and Tap-off shafts - Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-05-02","actualRcv":"2026-05-21","id":33,"sn":"33"},{"docNo":"IWTP02-GNR-00-SDS-00018","title":"Rayis, Rabigh Lifting stations \u2013 Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-04-25","actualSub":"2026-05-09","actualRcv":"2026-05-26","id":34,"sn":"34"},{"docNo":"IWTP02-GNR-01-EDU-00001","title":"Rayis WSF - Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-14","actualSub":"2026-06-03","actualRcv":"2026-06-13","id":35,"sn":"35"},{"docNo":"IWTP02-GNR-01-SDS-20201","title":"Rayis Chlorination Unit - Structural Foundation Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-03-30","actualSub":"2026-04-29","actualRcv":"2026-05-14","id":36,"sn":"36"},{"docNo":"IWTP02-GNR-02-ADA-02202","title":"Rayis Water Quality Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-15","actualSub":"2026-05-19","actualRcv":"2026-06-02","id":37,"sn":"37"},{"docNo":"IWTP02-GNR-02-ADA-04202","title":"Rayis Pump House - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-05-19","actualRcv":"2026-06-03","id":38,"sn":"38"},{"docNo":"IWTP02-GNR-02-ADA-05202","title":"Rayis VSD & VSD Transformers Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-03-15","actualSub":"2026-05-19","actualRcv":"2026-06-03","id":39,"sn":"39"},{"docNo":"IWTP02-GNR-02-ADA-06202","title":"Rayis Workshop & Storage Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-05-19","actualRcv":"2026-06-05","id":40,"sn":"40"},{"docNo":"IWTP02-GNR-02-ADA-10202","title":"Rayis Administrative - Laboratory - Central Control Buildng - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-05-19","actualRcv":"2026-06-02","id":41,"sn":"41"},{"docNo":"IWTP02-GNR-02-ADA-11202","title":"Rayis Generator Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-05-19","actualRcv":"2026-06-05","id":42,"sn":"42"},{"docNo":"IWTP02-GNR-02-ADA-12202","title":"Rayis Fire Pumps Room - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-25","actualSub":"2026-05-19","actualRcv":"2026-06-03","id":43,"sn":"43"},{"docNo":"IWTP02-GNR-02-ADA-13202","title":"Rayis Electrical Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-10","actualSub":"2026-05-19","actualRcv":"2026-06-03","id":44,"sn":"44"},{"docNo":"IWTP02-GNR-02-ADA-16202","title":"Rayis Security Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-15","actualSub":"2026-05-19","actualRcv":"2026-06-05","id":45,"sn":"45"},{"docNo":"IWTP02-GNR-02-ADA-17202","title":"Rayis Visitor Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-05-19","actualRcv":"2026-06-03","id":46,"sn":"46"},{"docNo":"IWTP02-GNR-02-ADA-18202","title":"Rayis Main Gate House - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-06-23","actualRcv":"2026-07-02","id":47,"sn":"47"},{"docNo":"IWTP02-GNR-02-CDA-00204","title":"Rayis - Drain System layout","discipline":"Civil","currentRev":"0X","status":"W","targetDate":"2026-04-20","actualSub":"2026-08-09","actualRcv":"","id":48,"sn":"48"},{"docNo":"IWTP02-GNR-02-CDE-00204","title":"Rayis - Drinking Water & Plumbing System General Arrangement","discipline":"Civil","currentRev":"0X","status":"W","targetDate":"2026-05-15","actualSub":"2026-08-09","actualRcv":"","id":49,"sn":"49"},{"docNo":"IWTP02-GNR-02-CDZ-00001","title":"Rayis Workshop Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-05-12","actualRcv":"2026-05-26","id":50,"sn":"50"},{"docNo":"IWTP02-GNR-02-CDZ-00002","title":"Rayis Administrative Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-05-12","actualRcv":"2026-05-26","id":51,"sn":"51"},{"docNo":"IWTP02-GNR-02-CDZ-00003","title":"Rayis Pump House Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-15","actualSub":"2026-05-12","actualRcv":"2026-05-26","id":52,"sn":"52"},{"docNo":"IWTP02-GNR-02-CDZ-00004","title":"Rayis Electrical Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-05-15","actualSub":"2026-05-12","actualRcv":"2026-05-26","id":53,"sn":"53"},{"docNo":"IWTP02-GNR-02-CDZ-00005","title":"Rayis VSD Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-15","actualSub":"2026-05-16","actualRcv":"2026-05-29","id":54,"sn":"54"},{"docNo":"IWTP02-GNR-02-CDZ-00006","title":"Rayis Generator Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-20","actualSub":"2026-05-12","actualRcv":"2026-05-26","id":55,"sn":"55"},{"docNo":"IWTP02-GNR-02-CDZ-00007","title":"Rayis Fire Pump Room Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-20","actualSub":"2026-05-12","actualRcv":"2026-05-26","id":56,"sn":"56"},{"docNo":"IWTP02-GNR-02-CDZ-00008","title":"Rayis Security Building - Pre-cast Drawings","discipline":"Civil","currentRev":"0X","status":"A","targetDate":"2026-03-10","actualSub":"2026-05-16","actualRcv":"2026-06-02","id":57,"sn":"57"},{"docNo":"IWTP02-GNR-02-CDZ-00009","title":"Rayis Visitor Building - Pre-cast Drawings","discipline":"Civil","currentRev":"0X","status":"A","targetDate":"2026-05-20","actualSub":"2026-05-16","actualRcv":"2026-06-08","id":58,"sn":"58"},{"docNo":"IWTP02-GNR-02-CDZ-00010","title":"Rayis Water Quality Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-05-16","actualRcv":"2026-05-29","id":59,"sn":"59"},{"docNo":"IWTP02-GNR-02-EDU-00001","title":"Rayis - LV Single Line Diagrams - Main Panel","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-02","actualSub":"2026-05-23","actualRcv":"2026-06-13","id":60,"sn":"60"},{"docNo":"IWTP02-GNR-02-EDU-00002","title":"Rayis - HV & MV Single Line Diagram","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-03-25","actualSub":"","actualRcv":"","id":61,"sn":"61"},{"docNo":"IWTP02-GNR-02-EDW-00001","title":"Rayis - Main outdoor cable route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-10","actualSub":"2026-08-08","actualRcv":"","id":62,"sn":"62"},{"docNo":"IWTP02-GNR-02-EDW-00002","title":"Rayis - Main Earthing Grid Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-20","actualSub":"2026-08-08","actualRcv":"","id":63,"sn":"63"},{"docNo":"IWTP02-GNR-02-EDW-00003","title":"Rayis - Outdoor Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-12","actualSub":"2026-08-08","actualRcv":"","id":64,"sn":"64"},{"docNo":"IWTP02-GNR-02-EDW-00004","title":"Existing Pump Station - IWPT WSF - Rayis Area - Outdoor cable routing and single line diagram and data sheet - shop drawing","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-02-10","actualSub":"2026-07-20","actualRcv":"2026-07-30","id":65,"sn":"65"},{"docNo":"IWTP02-GNR-02-EDW-00005","title":"Rayis - Power Connection Electrical building Indoor Cable Routing","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-13","actualSub":"2026-07-20","actualRcv":"2026-07-30","id":66,"sn":"66"},{"docNo":"IWTP02-GNR-02-EDW-02001","title":"Rayis Water Quality Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-23","actualSub":"","actualRcv":"","id":67,"sn":"67"},{"docNo":"IWTP02-GNR-02-EDW-02002","title":"Rayis Water Quality Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-06-23","actualRcv":"2026-06-30","id":68,"sn":"68"},{"docNo":"IWTP02-GNR-02-EDW-02003","title":"Rayis Water Quality Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-27","actualSub":"2026-06-23","actualRcv":"2026-06-30","id":69,"sn":"69"},{"docNo":"IWTP02-GNR-02-EDW-04001","title":"Rayis Pump House - Indoor cable routing Drawing","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-10","actualSub":"2026-08-08","actualRcv":"","id":70,"sn":"70"},{"docNo":"IWTP02-GNR-02-EDW-04002","title":"Rayis Pump House - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-07-01","actualRcv":"2026-07-10","id":71,"sn":"71"},{"docNo":"IWTP02-GNR-02-EDW-04003","title":"Rayis Pump House - Indoor Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-06-29","actualRcv":"2026-07-10","id":72,"sn":"72"},{"docNo":"IWTP02-GNR-02-EDW-05001","title":"Rayis VSD & VSD Transformers Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-25","actualSub":"2026-08-10","actualRcv":"","id":73,"sn":"73"},{"docNo":"IWTP02-GNR-02-EDW-05002","title":"Rayis VSD & VSD Transformers Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-10","actualRcv":"","id":74,"sn":"74"},{"docNo":"IWTP02-GNR-02-EDW-05003","title":"Rayis VSD & VSD Transformers Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-10","actualRcv":"","id":75,"sn":"75"},{"docNo":"IWTP02-GNR-02-EDW-06001","title":"Rayis Workshop & Storage Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-17","actualSub":"","actualRcv":"","id":76,"sn":"76"},{"docNo":"IWTP02-GNR-02-EDW-06002","title":"Rayis Workshop & Storage Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-20","actualSub":"","actualRcv":"","id":77,"sn":"77"},{"docNo":"IWTP02-GNR-02-EDW-06003","title":"Rayis Workshop & Storage Building - Lighting Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-29","actualSub":"","actualRcv":"","id":78,"sn":"78"},{"docNo":"IWTP02-GNR-02-EDW-10001","title":"Rayis Administrative - Laboratory - Central Control Building \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-06","actualSub":"2026-08-10","actualRcv":"","id":79,"sn":"79"},{"docNo":"IWTP02-GNR-02-EDW-10002","title":"Rayis Administrative - Laboratory - Central Control Buildng - Earthing Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-30","actualSub":"","actualRcv":"","id":80,"sn":"80"},{"docNo":"IWTP02-GNR-02-EDW-10003","title":"Rayis Administrative - Laboratory - Central Control Buildng \u2013 Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-30","actualSub":"2026-08-10","actualRcv":"","id":81,"sn":"81"},{"docNo":"IWTP02-GNR-02-EDW-11001","title":"Rayis Generator Building \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-30","actualSub":"2026-06-14","actualRcv":"2026-06-30","id":82,"sn":"82"},{"docNo":"IWTP02-GNR-02-EDW-11002","title":"Rayis Generator Building \u2013 Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-06-14","actualRcv":"2026-06-30","id":83,"sn":"83"},{"docNo":"IWTP02-GNR-02-EDW-11003","title":"Rayis Generator Building \u2013 Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-21","actualSub":"2026-06-14","actualRcv":"2026-06-30","id":84,"sn":"84"},{"docNo":"IWTP02-GNR-02-EDW-12001","title":"Rayis Fire Pumps Room \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-20","actualSub":"2026-06-11","actualRcv":"2026-06-18","id":85,"sn":"85"},{"docNo":"IWTP02-GNR-02-EDW-12002","title":"Rayis Fire Pumps Room \u2013 Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-06-11","actualRcv":"2026-06-18","id":86,"sn":"86"},{"docNo":"IWTP02-GNR-02-EDW-12003","title":"Rayis Fire Pumps Room - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-11","actualSub":"2026-06-11","actualRcv":"2026-06-18","id":87,"sn":"87"},{"docNo":"IWTP02-GNR-02-EDW-13001","title":"Rayis Electrical Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-25","actualSub":"2026-08-08","actualRcv":"","id":88,"sn":"88"},{"docNo":"IWTP02-GNR-02-EDW-13002","title":"Rayis Electrical Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-15","actualSub":"2026-08-08","actualRcv":"","id":89,"sn":"89"},{"docNo":"IWTP02-GNR-02-EDW-13003","title":"Rayis Electrical Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-20","actualSub":"2026-08-08","actualRcv":"","id":90,"sn":"90"},{"docNo":"IWTP02-GNR-02-EDW-16001","title":"Rayis Security Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-11","actualSub":"","actualRcv":"","id":91,"sn":"91"},{"docNo":"IWTP02-GNR-02-EDW-16002","title":"Rayis Security Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-19","actualSub":"","actualRcv":"","id":92,"sn":"92"},{"docNo":"IWTP02-GNR-02-EDW-16003","title":"Rayis Security Building - Lighting Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-04","actualSub":"","actualRcv":"","id":93,"sn":"93"},{"docNo":"IWTP02-GNR-02-EDW-17001","title":"Rayis Visitor Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-22","actualSub":"","actualRcv":"","id":94,"sn":"94"},{"docNo":"IWTP02-GNR-02-EDW-17002","title":"Rayis Visitor Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-13","actualSub":"","actualRcv":"","id":95,"sn":"95"},{"docNo":"IWTP02-GNR-02-EDW-17003","title":"Rayis Visitor Building - Lighting Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-03","actualSub":"","actualRcv":"","id":96,"sn":"96"},{"docNo":"IWTP02-GNR-02-EDW-18001","title":"Rayis Main Gate House - Indoor Cable Route Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-14","actualSub":"","actualRcv":"","id":97,"sn":"97"},{"docNo":"IWTP02-GNR-02-EDW-18002","title":"Rayis Main Gate House - Earthing and Lightning Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-27","actualSub":"","actualRcv":"","id":98,"sn":"98"},{"docNo":"IWTP02-GNR-02-EDW-18003","title":"Rayis Main Gate House - Lighting Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-23","actualSub":"","actualRcv":"","id":99,"sn":"99"},{"docNo":"IWTP02-GNR-02-EDW-21001","title":"Rayis Steel Tanks - Earthing and Lightning Arrangement","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-03-20","actualSub":"2026-07-22","actualRcv":"2026-07-30","id":100,"sn":"100"},{"docNo":"IWTP02-GNR-02-EDW-21002","title":"Rayis Steel Tanks - Lightning Protection System","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-03","actualSub":"2026-07-22","actualRcv":"2026-07-30","id":101,"sn":"101"},{"docNo":"IWTP02-GNR-02-ELK-00001","title":"Rayis - Main LV Cable Schedule","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-27","actualSub":"2026-06-08","actualRcv":"2026-06-18","id":102,"sn":"102"},{"docNo":"IWTP02-GNR-02-ELK-00002","title":"Rayis - Secondary LV Cable Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-23","actualSub":"2026-07-09","actualRcv":"2026-07-16","id":103,"sn":"103"},{"docNo":"IWTP02-GNR-02-ELK-00003","title":"Rayis WSF - Electrical Cable Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-13","actualRcv":"2026-07-16","id":104,"sn":"104"},{"docNo":"IWTP02-GNR-02-GDA-00101","title":"Rayis - General Layout","discipline":"General and/or Multidisciplinary","currentRev":"","status":"Not Submitted","targetDate":"2026-05-30","actualSub":"","actualRcv":"","id":105,"sn":"105"},{"docNo":"IWTP02-GNR-02-IDT-00001","title":"Rayis - Indoor Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"B","targetDate":"2026-05-27","actualSub":"2026-06-17","actualRcv":"2026-07-01","id":106,"sn":"106"},{"docNo":"IWTP02-GNR-02-IDT-00002","title":"Rayis - Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-04-16","actualSub":"2026-07-04","actualRcv":"2026-07-17","id":107,"sn":"107"},{"docNo":"IWTP02-GNR-02-IDT-00003","title":"Rayis - Instrument Panel & Distribution Layout","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-04-19","actualSub":"","actualRcv":"","id":108,"sn":"108"},{"docNo":"IWTP02-GNR-02-IDT-00004","title":"Rayis - Instrument and Control Wiring Diagrams","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":109,"sn":"109"},{"docNo":"IWTP02-GNR-02-IDT-00005","title":"Rayis - Cables & Trays Routing Drawings","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-30","actualSub":"","actualRcv":"","id":110,"sn":"110"},{"docNo":"IWTP02-GNR-02-IDT-10001","title":"Control room arquitecture","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-04-03","actualSub":"","actualRcv":"","id":111,"sn":"111"},{"docNo":"IWTP02-GNR-02-IDW-00001","title":"Rayis - Cable Schedule","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-15","actualSub":"","actualRcv":"","id":112,"sn":"112"},{"docNo":"IWTP02-GNR-02-MDA-00001","title":"Fire Water Tank General Arrangement","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-30","actualSub":"","actualRcv":"","id":113,"sn":"113"},{"docNo":"IWTP02-GNR-02-MDI-00001","title":"Rayis - Main Piping System, Isometrics","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-06-10","actualSub":"","actualRcv":"","id":114,"sn":"114"},{"docNo":"IWTP02-GNR-02-MDL-21001","title":"Rayis Steel Tanks - Mechanical Arrangement Drawing","discipline":"Mechanical","currentRev":"1X","status":"B","targetDate":"2026-02-25","actualSub":"2026-06-29","actualRcv":"2026-07-01","id":115,"sn":"115"},{"docNo":"IWTP02-GNR-02-MDP-00001","title":"Rayis - Main Piping System, General Arrangement & Sections","discipline":"Mechanical","currentRev":"0X","status":"D","targetDate":"2026-06-10","actualSub":"2026-06-13","actualRcv":"2026-06-17","id":116,"sn":"116"},{"docNo":"IWTP02-GNR-02-MDP-04001","title":"Rayis Pump House - General Piping Arrangement Drawing","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":117,"sn":"117"},{"docNo":"IWTP02-GNR-02-MDX-02201","title":"Rayis Water Quality Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-03-15","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":118,"sn":"118"},{"docNo":"IWTP02-GNR-02-MDX-04201","title":"Rayis Pump House \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":119,"sn":"119"},{"docNo":"IWTP02-GNR-02-MDX-05201","title":"Rayis VSD & VSD Transformers Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":120,"sn":"120"},{"docNo":"IWTP02-GNR-02-MDX-06201","title":"Rayis Workshop & Storage Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":121,"sn":"121"},{"docNo":"IWTP02-GNR-02-MDX-10201","title":"Rayis Administrative - Laboratory - Central Control Buildng \u2013 Drinking Water & Plumbing Layout","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":122,"sn":"122"},{"docNo":"IWTP02-GNR-02-MDX-11201","title":"Rayis Generator Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-03-15","actualSub":"2026-07-18","actualRcv":"2026-07-23","id":123,"sn":"123"},{"docNo":"IWTP02-GNR-02-MDX-12201","title":"Rayis Fire Pumps Room \u2013 Drinking Water & Plumbing Layout","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":124,"sn":"124"},{"docNo":"IWTP02-GNR-02-MDX-13201","title":"Rayis Electrical Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-03-10","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":125,"sn":"125"},{"docNo":"IWTP02-GNR-02-MDX-16201","title":"Rayis Security Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-03-30","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":126,"sn":"126"},{"docNo":"IWTP02-GNR-02-MDX-17201","title":"Rayis Visitor Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":127,"sn":"127"},{"docNo":"IWTP02-GNR-02-MDX-18201","title":"Rayis Main Gate House \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-07-18","actualRcv":"2026-07-23","id":128,"sn":"128"},{"docNo":"IWTP02-GNR-02-SDR-21201","title":"Rayis Steel Tanks - Tank Foundations Reinforcement Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"W","targetDate":"2026-02-26","actualSub":"2026-04-29","actualRcv":"","id":129,"sn":"129"},{"docNo":"IWTP02-GNR-02-SDS-00001","title":"Fuel Tank Foundation Drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-05-30","actualSub":"2026-08-08","actualRcv":"","id":130,"sn":"130"},{"docNo":"IWTP02-GNR-02-SDS-00002","title":"Rayis Power transformer. Structural drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-30","actualSub":"2026-08-08","actualRcv":"","id":131,"sn":"131"},{"docNo":"IWTP02-GNR-02-SDS-00003","title":"Rayis distribution transformer. Structural drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-04-10","actualSub":"2026-08-09","actualRcv":"","id":132,"sn":"132"},{"docNo":"IWTP02-GNR-02-SDS-00004","title":"Rayis - Vertical Surge Vessel Foundation Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-04-15","actualSub":"2026-08-08","actualRcv":"","id":133,"sn":"133"},{"docNo":"IWTP02-GNR-02-SDS-00005","title":"Rayis Pipe Sleepers, Pipe supports, and valve supports - Structural drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-15","actualSub":"2026-05-09","actualRcv":"2026-05-26","id":134,"sn":"134"},{"docNo":"IWTP02-GNR-02-SDS-00006","title":"Rayis STP Civil Works - Structural Drawings","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"2026-04-25","actualSub":"","actualRcv":"","id":135,"sn":"135"},{"docNo":"IWTP02-GNR-02-SDS-00007","title":"Rayis Channel - Structural Drawings","discipline":"Structural and Supports","currentRev":"1X","status":"W","targetDate":"2026-04-30","actualSub":"2026-08-09","actualRcv":"","id":136,"sn":"136"},{"docNo":"IWTP02-GNR-02-SDS-00008","title":"Rayis Access Electrical Protection Manhole & Retaining Wall - Structural Drawings","discipline":"Structural and Supports","currentRev":"1X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-09","actualRcv":"","id":137,"sn":"137"},{"docNo":"IWTP02-GNR-02-SDS-00018","title":"Rayis Power transformer - Steel Structure shed drawings","discipline":"Structural and Supports","currentRev":"0X","status":"C","targetDate":"2026-02-25","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":138,"sn":"138"},{"docNo":"IWTP02-GNR-02-SDS-00019","title":"Rayis Distribution Transformer Shed - Structural Steel Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"C","targetDate":"2026-03-10","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":139,"sn":"139"},{"docNo":"IWTP02-GNR-02-SDS-00020","title":"Rayis Fire Water Tank - Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-05-02","actualRcv":"2026-05-14","id":140,"sn":"140"},{"docNo":"IWTP02-GNR-02-SDS-00021","title":"Rayis Power Transformer - Steel Structure Grating Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"C","targetDate":"2026-03-05","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":141,"sn":"141"},{"docNo":"IWTP02-GNR-02-SDS-00201","title":"Rayis - Carsheds Foundation Drawings","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"2026-05-20","actualSub":"","actualRcv":"","id":142,"sn":"142"},{"docNo":"IWTP02-GNR-02-SDS-02201","title":"Rayis Water Quality Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-05-09","actualRcv":"","id":143,"sn":"143"},{"docNo":"IWTP02-GNR-02-SDS-04201","title":"Rayis Pump House - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"W","targetDate":"2026-04-12","actualSub":"2026-08-10","actualRcv":"","id":144,"sn":"144"},{"docNo":"IWTP02-GNR-02-SDS-04401","title":"Rayis Pump House \u2013 Steel","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-06-06","actualRcv":"2026-06-20","id":145,"sn":"145"},{"docNo":"IWTP02-GNR-02-SDS-05201","title":"Rayis VSD & VSD Transformers Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-15","actualSub":"2026-08-09","actualRcv":"","id":146,"sn":"146"},{"docNo":"IWTP02-GNR-02-SDS-06201","title":"Rayis Workshop & Storage Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-03-20","actualSub":"2026-08-08","actualRcv":"","id":147,"sn":"147"},{"docNo":"IWTP02-GNR-02-SDS-07201","title":"Rayis - Compressors foundation drawing","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-03-05","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":148,"sn":"148"},{"docNo":"IWTP02-GNR-02-SDS-07202","title":"Rayis - Surge Vessel Foundation Drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-05","actualSub":"2026-08-08","actualRcv":"","id":149,"sn":"149"},{"docNo":"IWTP02-GNR-02-SDS-10201","title":"Rayis Administrative - Laboratory - Central Control Buildng - Structural Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-04-05","actualSub":"2026-08-08","actualRcv":"","id":150,"sn":"150"},{"docNo":"IWTP02-GNR-02-SDS-11201","title":"Rayis Generator Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-03-15","actualSub":"2026-05-03","actualRcv":"2026-05-12","id":151,"sn":"151"},{"docNo":"IWTP02-GNR-02-SDS-11401","title":"Rayis Generator Building \u2013 Steel works","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-06-06","actualRcv":"2026-06-20","id":152,"sn":"152"},{"docNo":"IWTP02-GNR-02-SDS-12201","title":"Rayis Fire Pumps Room - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"B","targetDate":"2026-03-20","actualSub":"2026-07-14","actualRcv":"2026-08-06","id":153,"sn":"153"},{"docNo":"IWTP02-GNR-02-SDS-12401","title":"Rayis Fire Pumps Room \u2013 Steel works","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-06-06","actualRcv":"2026-06-20","id":154,"sn":"154"},{"docNo":"IWTP02-GNR-02-SDS-13201","title":"Rayis Electrical Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-02-25","actualSub":"2026-08-08","actualRcv":"","id":155,"sn":"155"},{"docNo":"IWTP02-GNR-02-SDS-16201","title":"Rayis Security Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-14","actualRcv":"2026-08-06","id":156,"sn":"156"},{"docNo":"IWTP02-GNR-02-SDS-17201","title":"Rayis Visitor Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"B","targetDate":"2026-05-20","actualSub":"2026-07-14","actualRcv":"2026-08-06","id":157,"sn":"157"},{"docNo":"IWTP02-GNR-02-SDS-18201","title":"Rayis Main Gate House - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-25","actualSub":"2026-05-09","actualRcv":"2026-05-26","id":158,"sn":"158"},{"docNo":"IWTP02-GNR-02-SLL-00001","title":"Rayis - Pipes and Valves Support List","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":159,"sn":"159"},{"docNo":"IWTP02-GNR-02-VDT-02101","title":"Rayis Water Quality Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":160,"sn":"160"},{"docNo":"IWTP02-GNR-02-VDT-04101","title":"Rayis Pump House \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-05","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":161,"sn":"161"},{"docNo":"IWTP02-GNR-02-VDT-05101","title":"Rayis VSD & VSD Transformers Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-05-25","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":162,"sn":"162"},{"docNo":"IWTP02-GNR-02-VDT-06101","title":"Rayis Workshop & Storage Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-05-25","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":163,"sn":"163"},{"docNo":"IWTP02-GNR-02-VDT-10101","title":"Rayis Administrative - Laboratory - Central Control Buildng \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":164,"sn":"164"},{"docNo":"IWTP02-GNR-02-VDT-11101","title":"Rayis Generator Building - HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"","status":"Not Submitted","targetDate":"2026-04-25","actualSub":"","actualRcv":"","id":165,"sn":"165"},{"docNo":"IWTP02-GNR-02-VDT-12101","title":"Rayis Fire Pumps Room \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-30","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":166,"sn":"166"},{"docNo":"IWTP02-GNR-02-VDT-13101","title":"Rayis Electrical Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-10","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":167,"sn":"167"},{"docNo":"IWTP02-GNR-02-VDT-16101","title":"Rayis Security Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-01","actualRcv":"2026-08-08","id":168,"sn":"168"},{"docNo":"IWTP02-GNR-02-VDT-17101","title":"Rayis Visitor Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-04-10","actualSub":"2026-08-08","actualRcv":"","id":169,"sn":"169"},{"docNo":"IWTP02-GNR-02-VDT-18101","title":"Rayis Main Gate House - HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"","status":"Not Submitted","targetDate":"2026-04-15","actualSub":"","actualRcv":"","id":170,"sn":"170"},{"docNo":"IWTP02-GNR-04-ADA-19202","title":"Tap-off Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-20","actualSub":"2026-05-19","actualRcv":"2026-06-05","id":171,"sn":"171"},{"docNo":"IWTP02-GNR-04-CDA-00101","title":"Tap-Off -Underground layout - overall plant layout","discipline":"Civil","currentRev":"","status":"Not Submitted","targetDate":"2026-05-25","actualSub":"","actualRcv":"","id":172,"sn":"172"},{"docNo":"IWTP02-GNR-04-EDU-00001","title":"Tap-Off - Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-07","actualSub":"2026-06-04","actualRcv":"2026-06-18","id":173,"sn":"173"},{"docNo":"IWTP02-GNR-04-EDW-00001","title":"Tap-Off - Earthing and Lightning layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-27","actualRcv":"2026-08-04","id":174,"sn":"174"},{"docNo":"IWTP02-GNR-04-EDW-00002","title":"Tap-Off - Cable Route Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-23","actualSub":"","actualRcv":"","id":175,"sn":"175"},{"docNo":"IWTP02-GNR-04-EDW-00003","title":"Tap-Off - Lighting layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-30","actualSub":"","actualRcv":"","id":176,"sn":"176"},{"docNo":"IWTP02-GNR-04-EDW-19001","title":"Tap-off Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-30","actualSub":"","actualRcv":"","id":177,"sn":"177"},{"docNo":"IWTP02-GNR-04-EDW-19002","title":"Tap-off Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-25","actualSub":"","actualRcv":"","id":178,"sn":"178"},{"docNo":"IWTP02-GNR-04-EDW-19003","title":"Tap-off Building - Lighting Layout","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-19","actualSub":"","actualRcv":"","id":179,"sn":"179"},{"docNo":"IWTP02-GNR-04-ELK-00002","title":"Tap-Off - Electrical Cable Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-14","actualSub":"2026-07-12","actualRcv":"2026-07-16","id":180,"sn":"180"},{"docNo":"IWTP02-GNR-04-IDT-00001","title":"Tap-off - Cables & Trays Routing Drawings","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":181,"sn":"181"},{"docNo":"IWTP02-GNR-04-IDT-00002","title":"Tap-off - Instrument Panel & Distribution Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"C","targetDate":"2026-04-10","actualSub":"2026-07-15","actualRcv":"2026-07-27","id":182,"sn":"182"},{"docNo":"IWTP02-GNR-04-IDT-00003","title":"Tap-off - Instrument and Control Wiring Diagrams","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-17","actualSub":"","actualRcv":"","id":183,"sn":"183"},{"docNo":"IWTP02-GNR-04-IDT-00004","title":"Tap-Off Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-05-19","actualSub":"2026-07-07","actualRcv":"2026-07-17","id":184,"sn":"184"},{"docNo":"IWTP02-GNR-04-IDW-00001","title":"Tap-off - Cable Schedule","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-04-30","actualSub":"2026-08-02","actualRcv":"2026-08-07","id":185,"sn":"185"},{"docNo":"IWTP02-GNR-04-MDP-00002","title":"Hydraulic Profile","discipline":"Mechanical","currentRev":"1X","status":"B","targetDate":"2026-05-25","actualSub":"2026-06-29","actualRcv":"2026-06-30","id":186,"sn":"186"},{"docNo":"IWTP02-GNR-04-MDP-00011","title":"Pipeline Alignment Sheets from PK. 0.00 to PK. 43.00. IFC.","discipline":"Mechanical","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-22","actualRcv":"2026-07-29","id":187,"sn":"187"},{"docNo":"IWTP02-GNR-04-MDP-00012","title":"Pipeline Alignment Sheets from PK. 43.00 to PK. 90.00 IFC","discipline":"Mechanical","currentRev":"0X","status":"C","targetDate":"2026-05-30","actualSub":"2026-08-10","actualRcv":"2026-08-13","id":188,"sn":"188"},{"docNo":"IWTP02-GNR-04-MDP-00013","title":"Pipeline Alignment Sheets from PK. 90.00 to PK. 125.00 IFC","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-03-20","actualSub":"","actualRcv":"","id":189,"sn":"189"},{"docNo":"IWTP02-GNR-04-MDP-00014","title":"Pipeline Alignment Sheets from PK. 125.00 to PK. 151.136 IFC","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":190,"sn":"190"},{"docNo":"IWTP02-GNR-04-MDX-00001","title":"Tap-off building \u2013 Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-05-30","actualSub":"2026-08-03","actualRcv":"2026-08-06","id":191,"sn":"191"},{"docNo":"IWTP02-GNR-04-SDS-00001","title":"Drain, Vent & Washout Stations. Precast Formwork & Reinforcement Drawing","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"2026-05-05","actualSub":"","actualRcv":"","id":192,"sn":"192"},{"docNo":"IWTP02-GNR-04-SDS-00002","title":"Rayis Access culvert - Structural drawings","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-04-29","actualRcv":"2026-05-21","id":193,"sn":"193"},{"docNo":"IWTP02-GNR-04-SDS-19201","title":"Tap-off Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-04-10","actualSub":"2026-05-09","actualRcv":"2026-05-26","id":194,"sn":"194"},{"docNo":"IWTP02-GNR-04-VDT-19101","title":"Tap-off Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-05-05","actualSub":"2026-07-25","actualRcv":"2026-08-03","id":195,"sn":"195"},{"docNo":"IWTP02-GNR-05-ADA-02202","title":"Rabigh WQM Building. Architectural Drawing","discipline":"Architecture","currentRev":"1X","status":"W","targetDate":"2026-05-10","actualSub":"2026-07-19","actualRcv":"","id":196,"sn":"196"},{"docNo":"IWTP02-GNR-05-ADA-15202","title":"Rabigh Tie-in Building - Architectural Drawing","discipline":"Architecture","currentRev":"1X","status":"W","targetDate":"2026-04-25","actualSub":"2026-07-19","actualRcv":"","id":197,"sn":"197"},{"docNo":"IWTP02-GNR-05-CDA-00204","title":"Rabigh - Drain System layout","discipline":"Civil","currentRev":"","status":"Not Submitted","targetDate":"2026-05-05","actualSub":"","actualRcv":"","id":198,"sn":"198"},{"docNo":"IWTP02-GNR-05-CDS-00001","title":"Rabigh generator foundation - Structural drawings","discipline":"Civil","currentRev":"2X","status":"W","targetDate":"2026-03-05","actualSub":"2026-08-10","actualRcv":"","id":199,"sn":"199"},{"docNo":"IWTP02-GNR-05-CDZ-00001","title":"Rabigh Tie-in Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-05-16","actualRcv":"2026-05-26","id":200,"sn":"200"},{"docNo":"IWTP02-GNR-05-EDU-00001","title":"Rabigh - LV Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-07","actualSub":"2026-06-03","actualRcv":"2026-06-18","id":201,"sn":"201"},{"docNo":"IWTP02-GNR-05-EDW-00001","title":"Rabigh - Main Outdoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-11","actualSub":"2026-08-08","actualRcv":"","id":202,"sn":"202"},{"docNo":"IWTP02-GNR-05-EDW-00002","title":"Rabigh - Main Earthing Grid Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-30","actualSub":"2026-08-09","actualRcv":"","id":203,"sn":"203"},{"docNo":"IWTP02-GNR-05-EDW-00003","title":"Rabigh - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-05","actualSub":"2026-07-23","actualRcv":"2026-07-30","id":204,"sn":"204"},{"docNo":"IWTP02-GNR-05-EDW-00004","title":"Rabigh - Electrical building - Indoor Cable Routing","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-05-27","actualSub":"","actualRcv":"","id":205,"sn":"205"},{"docNo":"IWTP02-GNR-05-EDW-00005","title":"Rabigh - Electrical building - Outdoor Cable Routing","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"2026-04-29","actualSub":"","actualRcv":"","id":206,"sn":"206"},{"docNo":"IWTP02-GNR-05-EDW-00006","title":"Rabigh Water Quality Building \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-01","actualSub":"2026-06-25","actualRcv":"2026-07-10","id":207,"sn":"207"},{"docNo":"IWTP02-GNR-05-EDW-00007","title":"Rabigh Water Quality Building \u2013 Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-30","actualSub":"2026-06-24","actualRcv":"2026-06-30","id":208,"sn":"208"},{"docNo":"IWTP02-GNR-05-EDW-00008","title":"Rabigh Water Quality Building \u2013 Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-16","actualSub":"2026-06-28","actualRcv":"2026-07-10","id":209,"sn":"209"},{"docNo":"IWTP02-GNR-05-EDW-15001","title":"Rabigh Tie-in Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-29","actualSub":"2026-08-04","actualRcv":"2026-08-06","id":210,"sn":"210"},{"docNo":"IWTP02-GNR-05-EDW-15002","title":"Rabigh Tie-in Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-08-04","actualRcv":"2026-08-06","id":211,"sn":"211"},{"docNo":"IWTP02-GNR-05-EDW-15003","title":"Rabigh Tie-in Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-22","actualSub":"2026-08-04","actualRcv":"2026-08-13","id":212,"sn":"212"},{"docNo":"IWTP02-GNR-05-ELK-00001","title":"Rabigh - Electric Cables Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-19","actualSub":"2026-07-11","actualRcv":"2026-07-16","id":213,"sn":"213"},{"docNo":"IWTP02-GNR-05-GDA-00101","title":"Rabigh - General Layout","discipline":"General and/or Multidisciplinary","currentRev":"","status":"Not Submitted","targetDate":"2026-05-30","actualSub":"","actualRcv":"","id":214,"sn":"214"},{"docNo":"IWTP02-GNR-05-IDT-00001","title":"Rabigh - Cables & Trays Routing Drawings","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-05-09","actualSub":"","actualRcv":"","id":215,"sn":"215"},{"docNo":"IWTP02-GNR-05-IDT-00002","title":"Rabigh - Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-04-15","actualSub":"2026-07-05","actualRcv":"2026-07-17","id":216,"sn":"216"},{"docNo":"IWTP02-GNR-05-IDT-00003","title":"Rabigh - Instrument Panel & Distribution Layout","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-04-10","actualSub":"","actualRcv":"","id":217,"sn":"217"},{"docNo":"IWTP02-GNR-05-IDT-00004","title":"Rabigh - Instrument and Control Wiring Diagrams","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-04-06","actualSub":"","actualRcv":"","id":218,"sn":"218"},{"docNo":"IWTP02-GNR-05-IDW-00001","title":"Rabigh - Cable Schedule","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"2026-04-27","actualSub":"","actualRcv":"","id":219,"sn":"219"},{"docNo":"IWTP02-GNR-05-MDI-00001","title":"Rabigh - Main Piping System, Isometrics","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-20","actualSub":"","actualRcv":"","id":220,"sn":"220"},{"docNo":"IWTP02-GNR-05-MDP-00001","title":"Rabigh - Main Piping System, General Arrangement Sections","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-20","actualSub":"","actualRcv":"","id":221,"sn":"221"},{"docNo":"IWTP02-GNR-05-MDX-02201","title":"Rabigh Water Quality Building - Drinking Water & Plumbing Layout IFC","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-25","actualSub":"","actualRcv":"","id":222,"sn":"222"},{"docNo":"IWTP02-GNR-05-MDX-15101","title":"Rabigh Tie-in Building - Drinking Water & Plumbing Layout IFC","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"2026-05-20","actualSub":"","actualRcv":"","id":223,"sn":"223"},{"docNo":"IWTP02-GNR-05-SDS-00001","title":"Rabigh Pipe Sleepers, Pipe supports, and valve supports - Structural drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-05-09","actualRcv":"2026-05-26","id":224,"sn":"224"},{"docNo":"IWTP02-GNR-05-SDS-00002","title":"Rabigh Channel - Structural Drawings","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"2026-04-30","actualSub":"","actualRcv":"","id":225,"sn":"225"},{"docNo":"IWTP02-GNR-05-SDS-00003","title":"Rabigh Water Quality Monitoring Building - Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-04-15","actualSub":"2026-07-04","actualRcv":"2026-07-23","id":226,"sn":"226"},{"docNo":"IWTP02-GNR-05-SDS-07201","title":"Rabigh \u2013 Compressors foundation drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-15","actualSub":"2026-08-09","actualRcv":"","id":227,"sn":"227"},{"docNo":"IWTP02-GNR-05-SDS-07202","title":"Rabigh \u2013 Surge Vessel foundation drawing","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-03-15","actualSub":"2026-06-29","actualRcv":"2026-07-18","id":228,"sn":"228"},{"docNo":"IWTP02-GNR-05-SDS-15201","title":"Rabigh Tie-in Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-05-10","actualSub":"2026-05-02","actualRcv":"2026-05-26","id":229,"sn":"229"},{"docNo":"IWTP02-GNR-05-SLL-00001","title":"Rabigh - Pipes and Valves Support List","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"2026-05-10","actualSub":"","actualRcv":"","id":230,"sn":"230"},{"docNo":"IWTP02-GNR-05-VDT-00001","title":"Rabigh Water Quality Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-05-15","actualSub":"2026-08-10","actualRcv":"","id":231,"sn":"231"},{"docNo":"IWTP02-GNR-05-VDT-15101","title":"Rabigh Tie-in Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-05-10","actualSub":"2026-08-10","actualRcv":"","id":232,"sn":"232"}];
 
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -956,6 +1010,8 @@ function cellText(r,c){
   const v=c.calc?c.calc(r):(r[c.k]??'');
   if(c.pill){const k=v||'Not Submitted';
     return `<span class="pill ${k==='Not Submitted'?'s-N':'s-'+k}">${esc(k==='Not Submitted'?'Not sub.':k)}</span>`;}
+  if(c.k==='title'&&CCOUNT[r.id])
+    return esc(v)+'<span class="cbadge" title="'+CCOUNT[r.id]+' comment(s)">'+CCOUNT[r.id]+'</span>';
   return esc(v);
 }
 function renderGrid(){
@@ -977,6 +1033,7 @@ function renderGrid(){
     </select>
     <button class="btn" id="gadd"${canEdit()?'':' disabled'}>Add drawing</button>
     <button class="btn" id="gdel"${canEdit()?'':' disabled'}>Delete selected</button>
+    <button class="btn" id="gtalk">Discussion</button>
     <button class="btn" id="gpdf">Export PDF</button>
     <button class="btn" id="ghist">History</button>
     <button class="btn" id="gcols">Columns</button>
@@ -1005,6 +1062,8 @@ function wireGrid(){
   $('gdel').onclick=deleteSelected;
   $('gcols').onclick=openCols;
   $('gpdf').onclick=exportPDF;
+  $('gtalk').onclick=()=>{const r=GRID.rows[GRID.cur.r];
+    if(r)openDiscussion(r); else toast('Pick a row first');};
   $('ghist').onclick=()=>{const r=GRID.rows[GRID.cur.r];if(r)openHistory(r);else toast('Pick a row first');};
 
   const wrap=$('gwrap'), tbl=wrap.querySelector('table');
@@ -1273,6 +1332,337 @@ function openCols(){
     savePrefs(); renderGrid();});
 }
 
+
+
+/* ================= discussion =================
+   A thread per drawing. Every comment carries who wrote it and when.
+   Anyone signed in can read and post; you can edit or remove your own,
+   an admin can remove anything. */
+
+let CMTS={};                       // asbuiltId -> [comment]
+async function loadComments(id){
+  try{
+    const list=await api('comments?asbuiltId=eq.'+id+'&deletedAt=is.null&order=createdAt.asc');
+    CMTS[id]=list; return list;
+  }catch(e){ CMTS[id]=[]; return []; }
+}
+async function loadCommentCounts(){
+  try{
+    const list=await api('comments?deletedAt=is.null&select=asbuiltId');
+    CCOUNT={}; list.forEach(c=>{CCOUNT[c.asbuiltId]=(CCOUNT[c.asbuiltId]||0)+1;});
+  }catch(e){ CCOUNT={}; }
+}
+let CCOUNT={};
+const ago=ts=>{
+  if(!ts)return '';
+  const mins=Math.round((Date.now()-new Date(ts))/60000);
+  if(mins<1)return 'just now';
+  if(mins<60)return mins+' min ago';
+  if(mins<1440)return Math.round(mins/60)+'h ago';
+  const d=Math.round(mins/1440);
+  if(d<8)return d+'d ago';
+  return new Date(ts).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});
+};
+const initials=n=>(n||'?').split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+
+function commentsHTML(id){
+  const list=CMTS[id]||[];
+  if(!list.length)return '<div class="empty">No discussion yet. Start it below.</div>';
+  return `<div class="thread">${list.map(c=>{
+    const mine=USER&&c.authorId===USER.id;
+    return `<div class="cmt" data-c="${c.id}">
+      <div class="av">${esc(initials(c.authorName))}</div>
+      <div class="cb">
+        <div class="ch"><b>${esc(c.authorName||c.authorEmail)}</b>
+          <span>${esc(ago(c.createdAt))}${c.editedAt?' · edited':''}</span>
+          ${(mine||canAdmin())?`<button class="cx" data-del="${c.id}" title="Remove">✕</button>`:''}
+          ${mine?`<button class="cx" data-edit="${c.id}" title="Edit">✎</button>`:''}
+        </div>
+        <div class="ct">${esc(c.body).replace(/\n/g,'<br>')}</div>
+      </div></div>`;}).join('')}</div>`;
+}
+function composerHTML(id){
+  if(!LIVE||!USER)return '';
+  return `<div class="composer">
+    <div class="av me">${esc(initials(USER.name))}</div>
+    <textarea id="cnew" rows="2" placeholder="Write a comment…"></textarea>
+    <button class="btn primary" id="csend">Post</button></div>`;
+}
+async function postComment(id,body){
+  if(!body.trim())return;
+  const row={asbuiltId:id,body:body.trim(),authorId:USER.id,
+    authorName:USER.name||USER.email,authorEmail:USER.email};
+  const r=await api('comments',{method:'POST',
+    headers:{Prefer:'return=representation'},body:JSON.stringify(row)});
+  (CMTS[id]=CMTS[id]||[]).push(r[0]);
+  CCOUNT[id]=(CCOUNT[id]||0)+1;
+  await logAct('comment',AB.find(x=>x.id===id)||{id},'discussion','',body.trim().slice(0,60));
+  if(GRID&&GRID.win&&WINS.has(GRID.win.id))renderGrid();
+}
+async function removeComment(id,cid){
+  await api('comments?id=eq.'+cid,{method:'PATCH',body:JSON.stringify({deletedAt:nowTs()})});
+  CMTS[id]=(CMTS[id]||[]).filter(c=>c.id!==cid);
+  CCOUNT[id]=Math.max(0,(CCOUNT[id]||1)-1);
+  if(GRID&&GRID.win&&WINS.has(GRID.win.id))renderGrid();
+}
+function wireComments(root,id,redraw){
+  const send=root.querySelector('#csend'), ta=root.querySelector('#cnew');
+  if(send)send.onclick=async()=>{
+    const v=ta.value; if(!v.trim())return;
+    send.disabled=true;
+    try{ await postComment(id,v); ta.value=''; redraw(); }
+    catch(e){ toast('Could not post that comment'); }
+    finally{ send.disabled=false; }
+  };
+  if(ta)ta.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){e.preventDefault();send.click();}});
+  root.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    msgBox('Remove this comment?','','It will no longer be shown to anyone.',
+      [['Cancel',null,''],['Remove',async()=>{await removeComment(id,+b.dataset.del);redraw();},'danger']]);});
+  root.querySelectorAll('[data-edit]').forEach(b=>b.onclick=async()=>{
+    const c=(CMTS[id]||[]).find(x=>x.id===+b.dataset.edit); if(!c)return;
+    msgBox('Edit your comment','',
+      `<textarea id="cedit" rows="4" style="width:100%;padding:9px;border-radius:9px;
+        border:1px solid var(--ring);background:var(--field);color:var(--ink);font:inherit">${esc(c.body)}</textarea>`,
+      [['Cancel',null,''],['Save',async()=>{
+        const v=document.getElementById('cedit').value.trim(); if(!v)return;
+        await api('comments?id=eq.'+c.id,{method:'PATCH',
+          body:JSON.stringify({body:v,editedAt:nowTs()})});
+        c.body=v; c.editedAt=nowTs(); redraw();},'primary']]);});
+}
+async function openDiscussion(r){
+  const w=[...WINS.values()].find(x=>x.kind==='disc')||
+    createWindow('disc','Discussion','',null,null,560,520);
+  w.el.querySelector('.wt').innerHTML=esc(r.docNo)+'<small>'+esc(r.title)+'</small>';
+  w.body.innerHTML='<div class="dash"><div class="hint">Loading…</div></div>';
+  focusWin(w.id);
+  await loadComments(r.id);
+  const draw=()=>{
+    w.body.innerHTML='<div class="dash">'+commentsHTML(r.id)+composerHTML(r.id)+'</div>';
+    wireComments(w.body,r.id,draw);
+    const t=w.body.querySelector('#cnew'); if(t)t.focus();
+  };
+  draw();
+}
+
+/* ================= weekly submission plan =================
+   Pick drawings, say who is submitting each and by when. The person
+   responsible need not have a login — they are names on a list. */
+
+let ASSIGNEES=[], PLANS=[], PITEMS={};
+const monday=d=>{const x=new Date(d);const n=(x.getDay()+6)%7;x.setDate(x.getDate()-n);
+  return x.toISOString().slice(0,10);};
+const weekLabel=ws=>{
+  const a=new Date(ws), b=new Date(ws); b.setDate(b.getDate()+6);
+  const f=d=>d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  return f(a)+' – '+f(b)+' '+String(a.getFullYear()).slice(2);
+};
+async function loadPlanning(){
+  try{
+    [ASSIGNEES,PLANS]=await Promise.all([
+      api('assignees?active=is.true&order=name.asc'),
+      api('plans?projectId=eq.'+PROJ+'&deletedAt=is.null&order=weekStart.desc')]);
+  }catch(e){ ASSIGNEES=[]; PLANS=[]; }
+}
+async function loadPlanItems(planId){
+  try{ PITEMS[planId]=await api('plan_items?planId=eq.'+planId+'&order=id.asc'); }
+  catch(e){ PITEMS[planId]=[]; }
+  return PITEMS[planId];
+}
+const assigneeName=id=>{const a=ASSIGNEES.find(x=>x.id===id);return a?a.name:'— not assigned —';};
+
+async function openPlans(){
+  const w=createWindow('plan','Submission plan','who is sending what, and when',null,null,880,560);
+  w.body.innerHTML='<div class="dash"><div class="hint">Loading…</div></div>';
+  await loadPlanning();
+  if(!PLAN_CUR||!PLANS.some(p=>p.id===PLAN_CUR))PLAN_CUR=PLANS.length?PLANS[0].id:null;
+  const draw=async()=>{
+    const current=PLAN_CUR;
+    const items=current?await loadPlanItems(current):[];
+    const plan=PLANS.find(p=>p.id===current);
+    w.body.innerHTML=`<div class="dash">
+      <div class="planbar">
+        <select class="f" id="pweek">${PLANS.map(p=>
+          `<option value="${p.id}"${p.id===current?' selected':''}>${esc(weekLabel(p.weekStart))}${
+            p.name?' · '+esc(p.name):''}</option>`).join('')||'<option>No plans yet</option>'}</select>
+        <button class="btn" id="pnew"${canEdit()?'':' disabled'}>New week</button>
+        <button class="btn" id="padd"${canEdit()&&current?'':' disabled'}>Add selected drawings</button>
+        <button class="btn" id="ppdf"${current?'':' disabled'}>Export PDF</button>
+        <span class="hint" id="pcount">${items.length} drawing(s)</span>
+      </div>
+      ${plan?`<div class="panel">${items.length?`
+        <table class="ptbl"><thead><tr><th>Drawing</th><th>Name</th><th>Discipline</th>
+          <th>Responsible</th><th>Target</th><th>Status</th><th></th></tr></thead><tbody>
+        ${items.map(it=>{const r=AB.find(a=>a.id===it.asbuiltId)||{};
+          const k=r.status||'Not Submitted';
+          return `<tr data-i="${it.id}">
+            <td class="mono">${esc(r.docNo||'—')}</td>
+            <td>${esc(r.title||'')}</td>
+            <td class="hint">${esc(SHORT_DISC[r.discipline]||r.discipline||'')}</td>
+            <td><select class="f pa" data-i="${it.id}"${canEdit()?'':' disabled'}>
+              <option value="">— not assigned —</option>
+              ${ASSIGNEES.map(a=>`<option value="${a.id}"${a.id===it.assigneeId?' selected':''}>${esc(a.name)}</option>`).join('')}
+            </select></td>
+            <td><input class="f pd" type="date" data-i="${it.id}" value="${esc(it.targetDate||'')}"${canEdit()?'':' disabled'}></td>
+            <td class="ctr"><span class="pill ${k==='Not Submitted'?'s-N':'s-'+k}">${esc(k==='Not Submitted'?'Not sub.':k)}</span></td>
+            <td><button class="btn" data-rm="${it.id}"${canEdit()?'':' disabled'} style="padding:2px 8px">✕</button></td>
+          </tr>`;}).join('')}
+        </tbody></table>`
+        :'<div class="empty"><b>Nothing planned for this week</b>Select drawings in the register, then press “Add selected drawings”.</div>'}
+      </div>`:'<div class="empty"><b>No plans yet</b>Press “New week” to start one.</div>'}
+      <div class="panel"><h3>Who can be given work</h3>
+        <div class="alist">${ASSIGNEES.map(a=>`<span class="atag">${esc(a.name)}${
+          a.role?`<i>${esc(a.role)}</i>`:''}</span>`).join('')||'<span class="hint">Nobody on the list yet.</span>'}
+        </div>
+        ${canEdit()?`<div class="planbar" style="margin-top:10px">
+          <input class="f" id="aname" placeholder="Add a name — e.g. a draughtsman">
+          <input class="f" id="arole" placeholder="Role (optional)" style="max-width:170px">
+          <button class="btn" id="aadd">Add person</button></div>`:''}
+      </div></div>`;
+    wirePlan(draw);
+  };
+  await draw();
+}
+function wirePlan(draw){
+  const w=[...WINS.values()].find(x=>x.kind==='plan'); if(!w)return;
+  const $=id=>w.body.querySelector('#'+id);
+  const sel=$('pweek');
+  if(sel)sel.onchange=async()=>{ PLAN_CUR=+sel.value; await draw(); };
+  if($('pnew'))$('pnew').onclick=()=>{
+    const ws=monday(new Date());
+    msgBox('New weekly plan','',
+      `<div class="hint" style="margin-bottom:9px">Which week does this cover?</div>
+       <input class="f" id="pw" type="date" value="${ws}" style="width:100%;margin-bottom:9px">
+       <input class="f" id="pn" placeholder="A note, optional — e.g. Batch 3" style="width:100%">`,
+      [['Cancel',null,''],['Create',async()=>{
+        if(_planBusy)return; _planBusy=true;
+        try{
+          const d=monday(document.getElementById('pw').value||ws);
+          const n=document.getElementById('pn').value.trim();
+          const existing=PLANS.find(p=>p.weekStart===d);
+          if(existing){ PLAN_CUR=existing.id; await draw();
+            toast('That week already has a plan — opened it'); return; }
+          const r=await api('plans',{method:'POST',headers:{Prefer:'return=representation'},
+            body:JSON.stringify({projectId:PROJ,weekStart:d,name:n,createdBy:(USER&&USER.email)||''})});
+          const id=r[0].id;
+          await loadPlanning(); PLAN_CUR=id; await draw(); toast('Plan created');
+        } finally { _planBusy=false; }
+      },'primary']]);};
+  if($('padd'))$('padd').onclick=()=>openPicker(PLAN_CUR,draw);
+  if($('ppdf'))$('ppdf').onclick=()=>exportPlanPDF(PLAN_CUR);
+  w.body.querySelectorAll('.pa').forEach(s=>s.onchange=async()=>{
+    await api('plan_items?id=eq.'+s.dataset.i,{method:'PATCH',
+      body:JSON.stringify({assigneeId:s.value?+s.value:null})});
+    const it=(PITEMS[PLAN_CUR]||[]).find(x=>x.id===+s.dataset.i); if(it)it.assigneeId=s.value?+s.value:null;
+    toast('Assigned to '+(s.value?assigneeName(+s.value):'nobody'));});
+  w.body.querySelectorAll('.pd').forEach(i=>i.onchange=async()=>{
+    await api('plan_items?id=eq.'+i.dataset.i,{method:'PATCH',
+      body:JSON.stringify({targetDate:i.value})});
+    const it=(PITEMS[PLAN_CUR]||[]).find(x=>x.id===+i.dataset.i); if(it)it.targetDate=i.value;
+    toast('Target date set');});
+  w.body.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{
+    await api('plan_items?id=eq.'+b.dataset.rm,{method:'DELETE'});
+    delete PITEMS[PLAN_CUR]; await draw(); toast('Removed from the plan');});
+  if($('aadd'))$('aadd').onclick=async()=>{
+    const b=$('aadd'); if(b.disabled)return;
+    const n=$('aname').value.trim(); if(!n)return toast('Type a name first');
+    if(ASSIGNEES.some(a=>a.name.toLowerCase()===n.toLowerCase()))
+      return toast(n+' is already on the list');
+    b.disabled=true;
+    try{
+      await api('assignees',{method:'POST',
+        body:JSON.stringify({name:n,role:$('arole').value.trim(),reportsTo:USER?USER.id:null})});
+      await loadPlanning(); await draw(); toast(n+' added');
+    } catch(e){ toast('Could not add that person'); b.disabled=false; }
+  };
+}
+let PLAN_CUR=null, _planBusy=false;
+
+function openPicker(planId,draw){
+  const on=new Set((PITEMS[planId]||[]).map(i=>i.asbuiltId));
+  const pool=()=>AB.filter(r=>!on.has(r.id));
+  let q='', only='open';
+  const match=r=>{
+    if(only==='open'&&!isOpen(r))return false;
+    if(only==='ns'&&r.status!=='Not Submitted')return false;
+    if(!q)return true;
+    return ((r.docNo||'')+' '+(r.title||'')+' '+(r.discipline||'')).toLowerCase().includes(q);
+  };
+  const chosen=new Set();
+  const body=()=>`
+    <div class="planbar" style="margin-bottom:9px">
+      <input class="f" id="pkq" placeholder="Search number, name or discipline" style="flex:1;min-width:180px" value="${esc(q)}">
+      <select class="f" id="pkf" style="min-width:132px">
+        <option value="open"${only==='open'?' selected':''}>Open items</option>
+        <option value="ns"${only==='ns'?' selected':''}>Not submitted</option>
+        <option value=""${only===''?' selected':''}>Everything</option>
+      </select></div>
+    <div class="picker">${pool().filter(match).slice(0,300).map(r=>`
+      <label class="pk"><input type="checkbox" data-p="${r.id}"${chosen.has(r.id)?' checked':''}>
+        <span class="pn">${esc(r.docNo)}</span>
+        <span class="pt">${esc(r.title)}</span>
+        <span class="pdc">${esc(SHORT_DISC[r.discipline]||r.discipline||'')}</span></label>`).join('')
+      ||'<div class="empty">Nothing matches.</div>'}</div>
+    <div class="hint" id="pksum" style="margin-top:8px">${chosen.size} selected</div>`;
+  const m=msgBox('Add drawings to the plan','',body(),
+    [['Cancel',null,''],['Add selected',async()=>{
+      let added=0,already=0;
+      for(const id of chosen){
+        try{ await api('plan_items',{method:'POST',body:JSON.stringify({planId,asbuiltId:id})}); added++; }
+        catch(e){ already++; }
+      }
+      delete PITEMS[planId]; await draw();
+      toast(added+' added to the plan'+(already?', '+already+' already there':''));
+    },'primary']]);
+  const wire=()=>{
+    const box=document.getElementById('msg');
+    box.querySelectorAll('[data-p]').forEach(cb=>cb.onchange=()=>{
+      const id=+cb.dataset.p; cb.checked?chosen.add(id):chosen.delete(id);
+      const s=document.getElementById('pksum'); if(s)s.textContent=chosen.size+' selected';});
+    const qi=document.getElementById('pkq');
+    if(qi)qi.oninput=()=>{q=qi.value.trim().toLowerCase();redraw(qi.selectionStart);};
+    const fi=document.getElementById('pkf');
+    if(fi)fi.onchange=()=>{only=fi.value;redraw();};
+  };
+  const redraw=(caret)=>{
+    const box=document.getElementById('msg');
+    box.querySelector('.body').innerHTML=body(); wire();
+    const qi=document.getElementById('pkq');
+    if(qi&&caret!=null){qi.focus();qi.setSelectionRange(caret,caret);}
+  };
+  wire();
+}
+
+function exportPlanPDF(planId){
+  const plan=PLANS.find(p=>p.id===planId), items=PITEMS[planId]||[];
+  if(!items.length)return toast('Nothing on this plan to export');
+  let root=document.getElementById('printroot');
+  if(!root){root=document.createElement('div');root.id='printroot';document.body.appendChild(root);}
+  const stamp=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  root.innerHTML=`<div class="rhead">
+      <div class="rt"><h1>IWTP2 — Weekly Submission Plan</h1>
+        <div class="rs">${esc(weekLabel(plan.weekStart))}${plan.name?' · '+esc(plan.name):''}</div></div>
+      <div class="rd">${stamp}<br><span>${items.length} drawing${items.length===1?'':'s'}</span></div></div>
+    <table class="rtbl"><thead><tr><th class="c-idx">#</th><th class="c-docNo">Drawing number</th>
+      <th class="c-title">Submittal name</th><th class="c-discipline">Discipline</th>
+      <th class="c-status">Responsible</th><th class="c-targetDate">Target</th>
+      <th class="c-actualSub">Status</th></tr></thead><tbody>
+      ${items.map((it,i)=>{const r=AB.find(a=>a.id===it.asbuiltId)||{};
+        return `<tr><td class="c-idx">${i+1}</td><td class="c-docNo">${esc(r.docNo||'—')}</td>
+          <td class="c-title">${esc(r.title||'')}</td>
+          <td class="c-discipline">${esc(PRINT_DISC[r.discipline]||r.discipline||'')}</td>
+          <td class="c-status" style="text-align:left;font-weight:400">${esc(assigneeName(it.assigneeId))}</td>
+          <td class="c-targetDate">${esc(it.targetDate||'—')}</td>
+          <td class="c-actualSub" style="text-align:center">${esc((r.status||'Not Submitted')==='Not Submitted'?'Not sub.':r.status)}</td>
+        </tr>`;}).join('')}</tbody></table>
+    <div class="rfoot">IWTP2 Weekly Submission Plan · ${esc(weekLabel(plan.weekStart))} · ${stamp}${
+      USER?' · issued by '+esc(USER.name):''}</div>`;
+  document.body.classList.add('printing');
+  const done=()=>{document.body.classList.remove('printing');window.removeEventListener('afterprint',done);};
+  window.addEventListener('afterprint',done);
+  setTimeout(()=>{window.print();setTimeout(done,1500);},60);
+  toast('Set Landscape, then Save as PDF');
+}
 
 /* ================= PDF report =================
    Rendered as a print stylesheet rather than a PDF library, so it needs no
@@ -1971,6 +2361,7 @@ function mobLate(){
 }
 function mobOne(){
   const r=AB.find(x=>x.id===MOB.id);
+  if(r&&!CMTS[r.id])loadComments(r.id).then(()=>{if(MOB.view==='one'&&MOB.id===r.id)mobRender();});
   if(!r)return '<div class="empty"><b>Drawing not found</b>It may have been deleted.</div>';
   const k=r.status||'Not Submitted', cls=k==='Not Submitted'?'N':k;
   const MONO={docNo:1,currentRev:1,status:1,targetDate:1,actualSub:1,actualRcv:1};
@@ -1987,6 +2378,8 @@ function mobOne(){
     <div class="spec"><h4>Details</h4>${show.map(row).join('')}</div>
     <div class="spec"><h4>Revision history</h4>
       <div style="padding:12px 14px">${historyHTML(r)}</div></div>
+    <div class="spec"><h4>Discussion${CCOUNT[r.id]?' ('+CCOUNT[r.id]+')':''}</h4>
+      <div style="padding:12px 14px" id="mdisc">${commentsHTML(r.id)}${composerHTML(r.id)}</div></div>
     ${canEdit()?`<button class="btn danger" id="mdel"
       style="width:100%;padding:12px;border-radius:12px;font-weight:650">Delete this drawing</button>`:''}`;
 }
@@ -2026,6 +2419,11 @@ function wireMob(){
   if(s)s.oninput=()=>{MOB.q=s.value;const p=s.selectionStart;mobRender();
     const n=document.getElementById('msearch');if(n){n.focus();n.setSelectionRange(p,p);}};
   b.querySelectorAll('[data-me]').forEach(el=>el.onclick=()=>mobEdit(el.dataset.me));
+  const md=document.getElementById('mdisc');
+  if(md&&MOB.view==='one'){
+    const redraw=()=>{md.innerHTML=commentsHTML(MOB.id)+composerHTML(MOB.id);wireComments(md,MOB.id,redraw);};
+    wireComments(md,MOB.id,redraw);
+  }
   const d=document.getElementById('mdel');
   if(d)d.onclick=()=>{const r=AB.find(x=>x.id===MOB.id);
     msgBox('Delete '+(r.docNo||'this drawing')+'?','',
@@ -2195,6 +2593,8 @@ async function loadData(){
   AB=ab; LIVE=true;
   try{ NOTIFS=await api('notifs?projectId=eq.'+PROJ+'&order=id.desc&limit=100'); }catch(e){}
   await loadRevs();
+  await loadCommentCounts();
+  await loadPlanning();
 }
 async function loadRevs(){
   try{
@@ -2237,6 +2637,7 @@ async function boot(){
 /* topbar wiring */
 document.getElementById('b-reg').onclick=()=>{if(GRID&&WINS.has(GRID.win.id))focusWin(GRID.win.id);else openRegister();};
 document.getElementById('b-dash').onclick=openDashboard;
+document.getElementById('b-plan').onclick=openPlans;
 document.getElementById('b-undo').onclick=undo;
 document.getElementById('b-redo').onclick=redo;
 document.getElementById('b-bell').onclick=openNotifs;
