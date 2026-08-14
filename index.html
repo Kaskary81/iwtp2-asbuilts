@@ -2164,7 +2164,7 @@ function exportPlanPDF(planId){
   root.innerHTML=`<div class="rhead">
       <div class="rt"><h1>IWTP2 — Weekly Submission Plan</h1>
         <div class="rs">${esc(weekLabel(plan.weekStart))}${plan.name?' · '+esc(plan.name):''}</div></div>
-      <div class="rd">${stamp}<br><span>${items.length} drawing${items.length===1?'':'s'} · ${planProgress(planId).pct}% submitted</span></div></div>
+      <div class="rd">${stamp}<br><span>${items.length} drawing${items.length===1?'':'s'}${planProgress(planId).started?' · '+planProgress(planId).pct+'% submitted':' · '+planPhase(plan).label}</span></div></div>
     <table class="rtbl"><thead><tr><th class="c-idx">#</th><th class="c-docNo">Drawing number</th>
       <th class="c-title">Submittal name</th><th class="c-discipline">Discipline</th>
       <th class="c-status">Responsible</th><th class="c-targetDate">Target</th>
@@ -3016,11 +3016,13 @@ function mobPlanManage(){
   msgBox(weekLabel(p.weekStart),'',
     `<div class="mrowlist">
        <button class="mopt" data-o="new">New week…<span>Plan a different week</span></button>
+       <button class="mopt" data-o="pdf">Export this plan as a PDF<span>Landscape A4 — set Landscape, then Save as PDF</span></button>
        <button class="mopt" data-o="edit">Change the week or note<span>${esc(p.name||'No note')}</span></button>
        <button class="mopt danger" data-o="del">Delete this plan<span>${n} drawing(s) on it — the drawings stay</span></button>
      </div>`,[['Close',null,'']]);
   document.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{
     const a=b.dataset.o; closeMsg();
+    if(a==='pdf')exportPlanPDF(p.id);
     if(a==='new')mobPlanNew();
     if(a==='edit')mobPlanEdit(p);
     if(a==='del')mobPlanDelete(p);});
