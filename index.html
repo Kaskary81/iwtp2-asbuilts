@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>As-Built Tracker — IWTP2</title>
+<style>
+:root{
+  color-scheme:light;
+  --page1:#eef1f4; --page2:#e4e9ee;
+  --glass:rgba(252,252,251,.94); --surface:#fcfcfb; --surface2:#f0efec; --field:#ffffff;
+  --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --ring:rgba(11,11,11,.09);
+  --accent:#2a78d6; --accent-soft:rgba(42,120,214,.10); --accent-soft2:rgba(42,120,214,.16);
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --critical:#d03b3b; --goodtext:#006300;
+  --sel:rgba(42,120,214,.14); --selb:#2a78d6;
+  --shadow:0 10px 34px rgba(15,20,30,.16),0 2px 8px rgba(15,20,30,.08);
+  --shadow-focus:0 18px 50px rgba(15,20,30,.24),0 3px 10px rgba(15,20,30,.10);
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page1:#101216; --page2:#0b0c0f;
+  --glass:rgba(26,26,25,.94); --surface:#1a1a19; --surface2:#2c2c2a; --field:#111110;
+  --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --ring:rgba(255,255,255,.10);
+  --accent:#3987e5; --accent-soft:rgba(57,135,229,.14); --accent-soft2:rgba(57,135,229,.22);
+  --goodtext:#0ca30c; --sel:rgba(57,135,229,.20); --selb:#3987e5;
+  --shadow:0 10px 34px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.4);
+  --shadow-focus:0 18px 50px rgba(0,0,0,.65),0 3px 10px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:13px;color:var(--ink);
+  background:radial-gradient(1200px 700px at 20% 0%,var(--page1),var(--page2));user-select:none}
+button,input,select{font-family:inherit;font-size:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ============ top bar ============ */
+#topbar{height:52px;display:flex;align-items:center;gap:6px;padding:0 14px;
+  background:var(--glass);backdrop-filter:blur(14px);border-bottom:1px solid var(--ring);
+  position:relative;z-index:900}
+#topbar .logo{width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+#topbar .title{font-weight:650;font-size:13.5px;letter-spacing:-.01em;margin-right:6px;white-space:nowrap}
+#topbar .title small{display:block;font-weight:400;font-size:10.5px;color:var(--muted)}
+#topbar .spacer{flex:1}
+.tbbtn{border:none;background:none;color:var(--ink2);font-size:12.5px;padding:7px 11px;
+  border-radius:9px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.tbbtn:hover{background:var(--accent-soft);color:var(--ink)}
+.tbbtn:disabled{opacity:.35;cursor:default}
+.tbbtn:disabled:hover{background:none;color:var(--ink2)}
+.menuwrap{position:relative}
+.menucard{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:236px;
+  background:var(--surface);border:1px solid var(--ring);border-radius:12px;
+  box-shadow:var(--shadow);padding:6px;z-index:999}
+.menuwrap.open .menucard{display:block}
+.menucard button{display:flex;width:100%;text-align:left;background:none;border:none;
+  font-size:12.5px;color:var(--ink);padding:8px 10px;border-radius:8px;cursor:pointer;
+  gap:9px;align-items:center}
+.menucard button:hover{background:var(--accent-soft)}
+.menucard hr{border:none;border-top:1px solid var(--ring);margin:5px 2px}
+.bell{position:relative}
+.bell i{position:absolute;top:2px;right:4px;background:var(--critical);color:#fff;
+  border-radius:10px;font-size:9px;font-style:normal;padding:0 4px;line-height:14px;min-width:14px;text-align:center}
+
+/* ============ desktop ============ */
+#desktop{position:absolute;inset:52px 0 26px 0;overflow:hidden}
+#dock{position:absolute;left:0;right:0;bottom:0;height:26px;display:flex;gap:6px;
+  align-items:center;padding:0 10px;background:var(--glass);border-top:1px solid var(--ring);
+  font-size:11.5px;z-index:800;overflow-x:auto}
+#dock button{border:1px solid var(--ring);background:var(--surface2);color:var(--ink2);
+  border-radius:7px;padding:1px 9px;cursor:pointer;font-size:11px;white-space:nowrap}
+#dock button:hover{background:var(--accent-soft)}
+#dock .st{margin-left:auto;color:var(--muted);white-space:nowrap;padding-left:12px}
+
+.win{position:absolute;background:var(--surface);border:1px solid var(--ring);border-radius:13px;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;min-width:320px;min-height:180px}
+.win.focus{box-shadow:var(--shadow-focus);border-color:var(--accent-soft2)}
+.win .wbar{height:34px;display:flex;align-items:center;gap:7px;padding:0 8px 0 12px;
+  background:var(--surface2);border-bottom:1px solid var(--ring);cursor:move;flex:none}
+.win .wt{font-weight:600;font-size:12.5px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.win .wt small{font-weight:400;color:var(--muted);margin-left:7px}
+.win .wb{border:none;background:none;color:var(--ink2);width:22px;height:22px;border-radius:6px;
+  cursor:pointer;font-size:13px;line-height:1;flex:none}
+.win .wb:hover{background:var(--accent-soft);color:var(--ink)}
+.win .wbody{flex:1;overflow:auto;position:relative}
+.win .wtools{display:flex;gap:6px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--ring);
+  flex-wrap:wrap;background:var(--surface);position:sticky;top:0;z-index:6}
+.grip{position:absolute;z-index:5}
+.grip.e{top:0;right:-3px;width:8px;height:100%;cursor:ew-resize}
+.grip.s{bottom:-3px;left:0;height:8px;width:100%;cursor:ns-resize}
+.grip.se{bottom:-3px;right:-3px;width:14px;height:14px;cursor:nwse-resize}
+#snapghost{position:absolute;border:2px solid var(--accent);background:var(--accent-soft);
+  border-radius:12px;display:none;pointer-events:none;z-index:700}
+
+/* ============ grid ============ */
+.gwrap{overflow:auto;height:100%}
+table.g{border-collapse:separate;border-spacing:0;font-size:12px;table-layout:fixed}
+table.g th,table.g td{border-right:1px solid var(--grid);border-bottom:1px solid var(--grid);
+  padding:4px 7px;text-align:left;vertical-align:top;overflow:hidden;white-space:nowrap;
+  text-overflow:ellipsis;position:relative;background:var(--surface)}
+table.g thead th{position:sticky;top:0;background:var(--surface2);font-weight:600;font-size:11px;
+  color:var(--ink2);z-index:4;user-select:none;cursor:pointer}
+table.g thead th.drag{opacity:.4}
+table.g th .cr{position:absolute;top:0;right:-3px;width:7px;height:100%;cursor:col-resize;z-index:5}
+table.g tbody th{position:sticky;left:0;z-index:3;background:var(--surface2);text-align:right;
+  color:var(--muted);font-weight:500;font-size:11px;width:44px;cursor:pointer}
+table.g tbody th .rr{position:absolute;left:0;bottom:-3px;height:7px;width:100%;cursor:row-resize}
+table.g thead th.corner{left:0;z-index:6;width:44px}
+td.sel{background:var(--sel)}
+td.cur{outline:2px solid var(--selb);outline-offset:-2px;z-index:2}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.ctr{text-align:center}
+tr.dim td{color:var(--muted)}
+.cellin{position:absolute;inset:0;border:2px solid var(--selb);background:var(--field);
+  color:var(--ink);padding:3px 5px;font:inherit;z-index:20;user-select:text}
+select.cellin{padding:1px 3px}
+
+.pill{display:inline-block;padding:0 8px;border-radius:20px;font-size:11px;font-weight:600;line-height:17px}
+.s-A,.s-B,.s-I{background:rgba(12,163,12,.15);color:var(--goodtext)}
+.s-B{background:rgba(12,163,12,.10)}
+.s-C{background:rgba(236,131,90,.20);color:#b8501f}
+.s-D{background:rgba(208,59,59,.18);color:#a52020}
+.s-W{background:rgba(250,178,25,.22);color:#8a6100}
+.s-N{background:var(--surface2);color:var(--muted)}
+:root[data-theme="dark"] .s-C{color:#f0a077}:root[data-theme="dark"] .s-D{color:#f08080}
+:root[data-theme="dark"] .s-W{color:#f5c451}
+
+.btn{border:1px solid var(--ring);background:var(--surface2);color:var(--ink);border-radius:9px;
+  padding:5px 11px;cursor:pointer;font-size:12px}
+.btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:disabled:hover{background:var(--surface2);border-color:var(--ring)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.danger{background:var(--critical);color:#fff;border-color:var(--critical)}
+input.f,select.f{border:1px solid var(--ring);background:var(--field);color:var(--ink);
+  border-radius:8px;padding:5px 8px;user-select:text}
+.hint{font-size:11.5px;color:var(--muted)}
+
+/* ============ dashboard ============ */
+.dash{padding:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface2);border:1px solid var(--ring);border-radius:12px;padding:11px 13px}
+.kpi .k{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font-size:27px;font-weight:660;letter-spacing:-.02em;margin-top:3px;line-height:1}
+.kpi .p{font-size:11px;color:var(--ink2);margin-top:3px}
+.kpi .bar{height:4px;border-radius:3px;background:var(--surface);margin-top:8px;overflow:hidden}
+.kpi .bar i{display:block;height:100%;border-radius:3px}
+.panel{background:var(--surface2);border:1px solid var(--ring);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.panel h3{font-size:11px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:820px){.g2{grid-template-columns:1fr}}
+.panel table{border-collapse:collapse;width:100%;font-size:12px}
+.panel th,.panel td{border-bottom:1px solid var(--grid);padding:4px 7px;text-align:left}
+.panel th{font-weight:600;font-size:11px;color:var(--ink2)}
+svg text{fill:var(--ink2);font-size:10px;font-family:inherit}
+svg .gl{stroke:var(--grid);stroke-width:1}
+
+
+/* ---- charts ---- */
+.chart .legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:8px;
+  font-size:11.5px;color:var(--ink2)}
+.chart .legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;
+  vertical-align:-1px}
+.chart .legend i.dash{background:none;border-top:2px dashed var(--muted);height:0;border-radius:0;
+  vertical-align:4px;width:15px}
+.chart .lrow{display:flex;gap:8px;align-items:center;padding:3px 5px;border-radius:7px;transition:.12s}
+.chart .lrow:hover{background:var(--accent-soft)}
+.chart .lrow i{width:11px;height:11px;border-radius:3px;flex:none}
+.chart .lrow span:first-of-type{flex:1}
+.chart .lrow b{font-variant-numeric:tabular-nums}
+.chart path.draw{stroke-dasharray:3000;stroke-dashoffset:3000;animation:draw 1s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.chart path.draw{animation:none;stroke-dashoffset:0}}
+.chart .drow{display:flex;align-items:center;gap:9px;margin-bottom:5px;font-size:11.5px}
+.chart .dlab{width:150px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
+.chart .dbar{height:17px;border-radius:5px;overflow:hidden;display:flex;min-width:3px;
+  box-shadow:inset 0 0 0 1px var(--ring)}
+.chart .dbar i{display:block;height:100%;transition:opacity .12s}
+.chart .dn{width:34px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;flex:none}
+.chart .dp{width:42px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+.chart .bars{display:flex;gap:8px;align-items:flex-end;height:170px;overflow-x:auto;padding-top:4px}
+.chart .bcol{flex:1;min-width:34px;display:flex;flex-direction:column;height:100%;
+  border-radius:8px;padding:2px;transition:background .12s}
+.chart .bcol:hover{background:var(--accent-soft)}
+.chart .bval{font-size:11px;text-align:center;font-variant-numeric:tabular-nums;color:var(--ink2);height:14px}
+.chart .btr{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.chart .btr i{width:60%;border-radius:4px 4px 0 0;min-height:2px;transition:height .5s cubic-bezier(.2,.8,.3,1)}
+.chart .btr.pair i{width:44%}
+.chart .blab{font-size:10px;text-align:center;color:var(--muted);padding-top:5px;white-space:nowrap}
+@media(max-width:820px){.chart .dlab{width:98px}}
+
+/* ============ overlays ============ */
+#msgwrap{position:fixed;inset:0;background:rgba(0,0,0,.32);display:none;z-index:1500;
+  align-items:center;justify-content:center;padding:20px}
+#msgwrap.on{display:flex}
+.msg{background:var(--surface);border:1px solid var(--ring);border-radius:14px;box-shadow:var(--shadow-focus);
+  max-width:460px;width:100%;padding:18px 20px}
+.msg h4{font-size:14px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.msg .body{font-size:12.5px;color:var(--ink2);line-height:1.55;max-height:50vh;overflow:auto}
+.msg .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+#toast{position:fixed;bottom:38px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--ink);color:var(--page1);padding:8px 15px;border-radius:10px;font-size:12.5px;
+  opacity:0;pointer-events:none;transition:.22s;z-index:2000}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+#login{position:fixed;inset:0;background:radial-gradient(900px 600px at 30% 10%,var(--page1),var(--page2));
+  display:none;align-items:center;justify-content:center;z-index:1400;padding:20px}
+#login.on{display:flex}
+#login .card{background:var(--surface);border:1px solid var(--ring);border-radius:16px;
+  box-shadow:var(--shadow-focus);padding:26px 24px;width:100%;max-width:340px}
+#login h1{font-size:17px;margin-bottom:3px}
+#login p{font-size:12px;color:var(--muted);margin-bottom:18px}
+#login input{width:100%;margin-bottom:9px}
+
+/* ============ mobile ============ */
+#mob{display:none;position:fixed;inset:0;flex-direction:column;z-index:1000;background:var(--page2)}
+body.mobile #mob{display:flex}
+body.mobile #topbar,body.mobile #desktop,body.mobile #dock{display:none}
+body.mobile{overflow:hidden}
+#mhead{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;
+  background:var(--glass);border-bottom:1px solid var(--ring);flex:none}
+#mhead .t{flex:1;min-width:0}
+#mtitle{font-weight:650;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#msub{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mhead button{border:none;background:var(--surface2);color:var(--ink);width:34px;height:34px;
+  border-radius:11px;font-size:15px;cursor:pointer;flex:none;position:relative}
+#mbody{flex:1;overflow:auto;padding:12px;-webkit-overflow-scrolling:touch}
+#mtabs{display:flex;background:var(--glass);border-top:1px solid var(--ring);flex:none;
+  padding-bottom:env(safe-area-inset-bottom)}
+#mtabs button{flex:1;border:none;background:none;color:var(--muted);padding:8px 2px 9px;
+  font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+#mtabs button b{font-size:17px;font-weight:400;line-height:1}
+#mtabs button.on{color:var(--accent)}
+.mcard{background:var(--surface);border:1px solid var(--ring);border-radius:13px;padding:12px 14px;
+  margin-bottom:9px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.mcard .r1{display:flex;gap:8px;align-items:baseline}
+.mcard .no{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;flex:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcard .ti{font-size:13.5px;font-weight:600;margin-top:3px;line-height:1.35}
+.mcard .m{font-size:11.5px;color:var(--muted);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap}
+.mrow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--grid);
+  font-size:13px;align-items:center}
+.mrow:last-child{border-bottom:none}
+.mrow .l{color:var(--muted);font-size:12px;flex:none}
+.mrow .v{text-align:right;word-break:break-word}
+.mrow.tap{cursor:pointer}
+.mrow.tap:active{background:var(--accent-soft)}
+.mfilt{display:flex;gap:7px;overflow-x:auto;padding-bottom:10px;margin-bottom:2px}
+.mfilt button{border:1px solid var(--ring);background:var(--surface);color:var(--ink2);
+  border-radius:20px;padding:5px 13px;font-size:12px;white-space:nowrap;cursor:pointer;flex:none}
+.mfilt button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+#msearch{width:100%;margin-bottom:10px;padding:9px 12px;border-radius:11px;font-size:14px}
+.mkpi{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.mkpi .kpi{background:var(--surface)}
+.empty{padding:34px 16px;text-align:center;color:var(--muted);font-size:12.5px}
+.offbar{background:rgba(250,178,25,.14);border:1px solid rgba(250,178,25,.5);border-radius:11px;
+  padding:9px 12px;margin-bottom:12px;font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo">▦</div>
+  <div class="title">As-Built Tracker<small id="projsub">IWTP2</small></div>
+  <button class="tbbtn" id="b-reg">▦ Register</button>
+  <button class="tbbtn" id="b-dash">◔ Dashboard</button>
+  <button class="tbbtn" id="b-undo" title="Undo (Ctrl+Z)">↶</button>
+  <button class="tbbtn" id="b-redo" title="Redo (Ctrl+Y)">↷</button>
+  <div class="spacer"></div>
+  <button class="tbbtn bell" id="b-bell" title="Notifications">🔔<i id="belln" style="display:none"></i></button>
+  <div class="menuwrap" id="menu">
+    <button class="tbbtn" id="b-menu">☰</button>
+    <div class="menucard">
+      <button data-a="cols">▤ Choose columns…</button>
+      <button data-a="xlsx">⤓ Export to Excel</button>
+      <button data-a="csv">⤓ Export to CSV</button>
+      <button data-a="import">⤒ Import from Excel…</button>
+      <hr>
+      <button data-a="activity">📜 Activity log</button>
+      <button data-a="users">👤 People and access</button>
+      <hr>
+      <button data-a="arrange">⊞ Tidy the windows</button>
+      <button data-a="theme">◐ Light / dark</button>
+      <button data-a="mobile">▯ Switch to the phone layout</button>
+      <hr>
+      <button data-a="logout">⇥ Sign out</button>
+    </div>
+  </div>
+</div>
+
+<div id="desktop"><div id="snapghost"></div></div>
+<div id="dock"><span class="st" id="dockst"></span></div>
+
+<!-- mobile -->
+<div id="mob">
+  <div id="mhead">
+    <button id="mback" style="visibility:hidden">‹</button>
+    <div class="t"><div id="mtitle">As-Builts</div><div id="msub">IWTP2</div></div>
+    <button id="mbell">🔔<i id="mbelln" style="position:absolute;top:2px;right:3px;background:var(--critical);color:#fff;border-radius:9px;font-size:9px;font-style:normal;padding:0 4px;line-height:13px;display:none"></i></button>
+  </div>
+  <div id="mbody"></div>
+  <div id="mtabs"></div>
+</div>
+
+<!-- login -->
+<div id="login"><div class="card">
+  <h1>As-Built Tracker</h1><p>IWTP2 — sign in to continue</p>
+  <input class="f" id="lu" placeholder="Username" autocomplete="username">
+  <input class="f" id="lp" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="btn primary" id="lgo" style="width:100%;padding:9px;margin-top:6px">Sign in</button>
+  <p style="margin:12px 0 0" id="lerr"></p>
+</div></div>
+
+<div id="msgwrap"><div class="msg" id="msg"></div></div>
+<div id="toast"></div>
+
+<script>
+/* ==================================================================
+   IWTP2 As-Built Tracker
+   Grid engine, window shell, undo stack and mobile shell ported from
+   the MAADEN Taif-Ar Rjum tracker and adapted to a single register.
+   ================================================================== */
+const SB_URL='https://flwlxjibrokmohtehtjc.supabase.co';
+const SB_KEY='sb_publishable_RG6mCq0bcyiMsEsZns8fvw_d0bBUMJv';
+const PROJ=1;
+const H={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'};
+const XLSX_CDN='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+const APPROVED=['A','B','I'], REJECTED=['C','D'];
+const CODES=['A','B','I','C','D','W','Not Submitted'];
+const COLOR={A:'#0ca30c',B:'#5cc45c',I:'#8ad48a',C:'#ec835a',D:'#d03b3b',W:'#fab219','Not Submitted':'#b9b7b0'};
+const DISCS=['Architecture','Civil','Earthworks and Geotechnical','Electric',
+  'General and/or Multidisciplinary','HVAC','Instrumentation and Control','Mechanical',
+  'Process','Structural and Supports','Testing and commissioning'];
+
+/* column model — the full agreed as-built set */
+const COLS=[
+  {k:'sn',         t:'#',              w:46,  ro:1, cls:'num'},
+  {k:'docNo',      t:'Drawing number', w:196},
+  {k:'title',      t:'Submittal name', w:360},
+  {k:'discipline', t:'Discipline',     w:180, opts:()=>DISCS},
+  {k:'currentRev', t:'Revision',       w:82,  cls:'ctr'},
+  {k:'status',     t:'Approval status',w:118, cls:'ctr', opts:()=>CODES, pill:1},
+  {k:'targetDate', t:'Targeted',       w:104, date:1},
+  {k:'actualSub',  t:'Submission',     w:104, date:1},
+  {k:'actualRcv',  t:'Receipt',        w:104, date:1}
+];
+const COLBY=Object.fromEntries(COLS.map(c=>[c.k,c]));
+
+/* ---------------- state ---------------- */
+let AB=[], LIVE=false, USER=null, MOBILE=false;
+let PREFS={order:COLS.map(c=>c.k), hidden:COLS.filter(c=>c.off).map(c=>c.k), w:{}, rowh:24};
+let NOTIFS=[], ACTS=[];
+const today=new Date().toISOString().slice(0,10);
+const SNAPSHOT=[{"id":1,"sn":"1","docNo":"IWTP02-GNR-00-CDS-00001","title":"Chlorination shelter - Steel Drawings","discipline":"Civil","currentRev":"1X","status":"W","targetDate":"2026-02-15","actualSub":"2026-08-10","actualRcv":""},{"id":2,"sn":"2","docNo":"IWTP02-GNR-00-EDU-00001","title":"Safe current DC & AC Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-23","actualSub":"2026-06-06","actualRcv":"2026-06-18"},{"id":3,"sn":"3","docNo":"IWTP02-GNR-00-EDU-00002","title":"LV Single Line Diagrams - Auxiliary panels","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-15","actualSub":"2026-06-03","actualRcv":"2026-06-18"},{"id":4,"sn":"4","docNo":"IWTP02-GNR-00-EDU-00003","title":"Overall single line diagram","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-30","actualSub":"2026-05-23","actualRcv":"2026-06-13"},{"id":5,"sn":"5","docNo":"IWTP02-GNR-00-ELE-00001","title":"Electrical Load List","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-05","actualSub":"2026-08-08","actualRcv":""},{"id":6,"sn":"6","docNo":"IWTP02-GNR-00-IDG-00002","title":"Cause and Effect Matrix","discipline":"Instrumentation and Control","currentRev":"0X","status":"C","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-07"},{"id":7,"sn":"7","docNo":"IWTP02-GNR-00-IDW-00001","title":"Detailed Fiber Optic Wiring Diagrams","discipline":"Instrumentation and Control","currentRev":"0X","status":"C","targetDate":"2026-05-25","actualSub":"2026-08-01","actualRcv":"2026-08-07"},{"id":8,"sn":"8","docNo":"IWTP02-GNR-00-ILP-00004","title":"Instrument List","discipline":"Instrumentation and Control","currentRev":"1X","status":"B","targetDate":"2026-05-27","actualSub":"2026-06-28","actualRcv":"2026-07-14"},{"id":9,"sn":"9","docNo":"IWTP02-GNR-00-ILP-00005","title":"Junction Boxes List","discipline":"Instrumentation and Control","currentRev":"1X","status":"B","targetDate":"2026-05-12","actualSub":"2026-07-11","actualRcv":"2026-07-23"},{"id":10,"sn":"10","docNo":"IWTP02-GNR-00-MDL-00002","title":"Drain chamber stations \u2013 IFC Guide drawing","discipline":"Mechanical","currentRev":"0X","status":"B","targetDate":"2026-06-20","actualSub":"2026-05-17","actualRcv":"2026-06-02"},{"id":11,"sn":"11","docNo":"IWTP02-GNR-00-MLL-00001","title":"Lines list","discipline":"Mechanical","currentRev":"1X","status":"B","targetDate":"2026-05-10","actualSub":"2026-06-29","actualRcv":"2026-07-01"},{"id":12,"sn":"12","docNo":"IWTP02-GNR-00-PDD-00002","title":"Rayis - P&ID Diagram","discipline":"Process","currentRev":"1X","status":"B","targetDate":"2026-03-10","actualSub":"2026-06-30","actualRcv":"2026-07-01"},{"id":13,"sn":"13","docNo":"IWTP02-GNR-00-PDP-00001","title":"System Flow Diagram","discipline":"Process","currentRev":"1X","status":"B","targetDate":"2026-02-25","actualSub":"2026-06-29","actualRcv":"2026-07-01"},{"id":14,"sn":"14","docNo":"IWTP02-GNR-00-PLA-00001","title":"Alarm and Set Point List","discipline":"Process","currentRev":"0X","status":"C","targetDate":"2026-05-15","actualSub":"2026-07-30","actualRcv":"2026-08-07"},{"id":15,"sn":"15","docNo":"IWTP02-GNR-00-SDS-00001","title":"Rayis, Rabigh, and Tap-off shafts - Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-05-02","actualRcv":"2026-05-21"},{"id":16,"sn":"16","docNo":"IWTP02-GNR-00-SDS-00018","title":"Rayis, Rabigh Lifting stations \u2013 Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-04-25","actualSub":"2026-05-09","actualRcv":"2026-05-26"},{"id":17,"sn":"17","docNo":"IWTP02-GNR-01-EDU-00001","title":"Rayis WSF - Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-14","actualSub":"2026-06-03","actualRcv":"2026-06-13"},{"id":18,"sn":"18","docNo":"IWTP02-GNR-01-SDS-20201","title":"Rayis Chlorination Unit - Structural Foundation Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-03-30","actualSub":"2026-04-29","actualRcv":"2026-05-14"},{"id":19,"sn":"19","docNo":"IWTP02-GNR-02-ADA-02202","title":"Rayis Water Quality Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-15","actualSub":"2026-05-19","actualRcv":"2026-06-02"},{"id":20,"sn":"20","docNo":"IWTP02-GNR-02-ADA-04202","title":"Rayis Pump House - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-05-19","actualRcv":"2026-06-03"},{"id":21,"sn":"21","docNo":"IWTP02-GNR-02-ADA-05202","title":"Rayis VSD & VSD Transformers Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-03-15","actualSub":"2026-05-19","actualRcv":"2026-06-03"},{"id":22,"sn":"22","docNo":"IWTP02-GNR-02-ADA-06202","title":"Rayis Workshop & Storage Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-05-19","actualRcv":"2026-06-05"},{"id":23,"sn":"23","docNo":"IWTP02-GNR-02-ADA-10202","title":"Rayis Administrative - Laboratory - Central Control Buildng - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-05-19","actualRcv":"2026-06-02"},{"id":24,"sn":"24","docNo":"IWTP02-GNR-02-ADA-11202","title":"Rayis Generator Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-05-19","actualRcv":"2026-06-05"},{"id":25,"sn":"25","docNo":"IWTP02-GNR-02-ADA-12202","title":"Rayis Fire Pumps Room - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-25","actualSub":"2026-05-19","actualRcv":"2026-06-03"},{"id":26,"sn":"26","docNo":"IWTP02-GNR-02-ADA-13202","title":"Rayis Electrical Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-04-10","actualSub":"2026-05-19","actualRcv":"2026-06-03"},{"id":27,"sn":"27","docNo":"IWTP02-GNR-02-ADA-16202","title":"Rayis Security Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-15","actualSub":"2026-05-19","actualRcv":"2026-06-05"},{"id":28,"sn":"28","docNo":"IWTP02-GNR-02-ADA-17202","title":"Rayis Visitor Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-05-19","actualRcv":"2026-06-03"},{"id":29,"sn":"29","docNo":"IWTP02-GNR-02-ADA-18202","title":"Rayis Main Gate House - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-06-23","actualRcv":"2026-07-02"},{"id":30,"sn":"30","docNo":"IWTP02-GNR-02-CDA-00204","title":"Rayis - Drain System layout","discipline":"Civil","currentRev":"0X","status":"W","targetDate":"2026-04-20","actualSub":"2026-08-09","actualRcv":""},{"id":31,"sn":"31","docNo":"IWTP02-GNR-02-CDE-00204","title":"Rayis - Drinking Water & Plumbing System General Arrangement","discipline":"Civil","currentRev":"0X","status":"W","targetDate":"2026-05-15","actualSub":"2026-08-09","actualRcv":""},{"id":32,"sn":"32","docNo":"IWTP02-GNR-02-CDZ-00001","title":"Rayis Workshop Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-05-12","actualRcv":"2026-05-26"},{"id":33,"sn":"33","docNo":"IWTP02-GNR-02-CDZ-00002","title":"Rayis Administrative Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-05-12","actualRcv":"2026-05-26"},{"id":34,"sn":"34","docNo":"IWTP02-GNR-02-CDZ-00003","title":"Rayis Pump House Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-15","actualSub":"2026-05-12","actualRcv":"2026-05-26"},{"id":35,"sn":"35","docNo":"IWTP02-GNR-02-CDZ-00004","title":"Rayis Electrical Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-05-15","actualSub":"2026-05-12","actualRcv":"2026-05-26"},{"id":36,"sn":"36","docNo":"IWTP02-GNR-02-CDZ-00005","title":"Rayis VSD Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-15","actualSub":"2026-05-16","actualRcv":"2026-05-29"},{"id":37,"sn":"37","docNo":"IWTP02-GNR-02-CDZ-00006","title":"Rayis Generator Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-20","actualSub":"2026-05-12","actualRcv":"2026-05-26"},{"id":38,"sn":"38","docNo":"IWTP02-GNR-02-CDZ-00007","title":"Rayis Fire Pump Room Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-20","actualSub":"2026-05-12","actualRcv":"2026-05-26"},{"id":39,"sn":"39","docNo":"IWTP02-GNR-02-CDZ-00008","title":"Rayis Security Building - Pre-cast Drawings","discipline":"Civil","currentRev":"0X","status":"A","targetDate":"2026-03-10","actualSub":"2026-05-16","actualRcv":"2026-06-02"},{"id":40,"sn":"40","docNo":"IWTP02-GNR-02-CDZ-00009","title":"Rayis Visitor Building - Pre-cast Drawings","discipline":"Civil","currentRev":"0X","status":"A","targetDate":"2026-05-20","actualSub":"2026-05-16","actualRcv":"2026-06-08"},{"id":41,"sn":"41","docNo":"IWTP02-GNR-02-CDZ-00010","title":"Rayis Water Quality Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-05-16","actualRcv":"2026-05-29"},{"id":42,"sn":"42","docNo":"IWTP02-GNR-02-EDU-00001","title":"Rayis - LV Single Line Diagrams - Main Panel","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-02","actualSub":"2026-05-23","actualRcv":"2026-06-13"},{"id":43,"sn":"43","docNo":"IWTP02-GNR-02-EDW-00001","title":"Rayis - Main outdoor cable route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-10","actualSub":"2026-08-08","actualRcv":""},{"id":44,"sn":"44","docNo":"IWTP02-GNR-02-EDW-00002","title":"Rayis - Main Earthing Grid Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-20","actualSub":"2026-08-08","actualRcv":""},{"id":45,"sn":"45","docNo":"IWTP02-GNR-02-EDW-00003","title":"Rayis - Outdoor Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-12","actualSub":"2026-08-08","actualRcv":""},{"id":46,"sn":"46","docNo":"IWTP02-GNR-02-EDW-00004","title":"Existing Pump Station - IWPT WSF - Rayis Area - Outdoor cable routing and single line diagram and data sheet - shop drawing","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-02-10","actualSub":"2026-07-20","actualRcv":"2026-07-30"},{"id":47,"sn":"47","docNo":"IWTP02-GNR-02-EDW-00005","title":"Rayis - Power Connection Electrical building Indoor Cable Routing","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-13","actualSub":"2026-07-20","actualRcv":"2026-07-30"},{"id":48,"sn":"48","docNo":"IWTP02-GNR-02-EDW-02002","title":"Rayis Water Quality Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-06-23","actualRcv":"2026-06-30"},{"id":49,"sn":"49","docNo":"IWTP02-GNR-02-EDW-02003","title":"Rayis Water Quality Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-27","actualSub":"2026-06-23","actualRcv":"2026-06-30"},{"id":50,"sn":"50","docNo":"IWTP02-GNR-02-EDW-04001","title":"Rayis Pump House - Indoor cable routing Drawing","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-10","actualSub":"2026-08-08","actualRcv":""},{"id":51,"sn":"51","docNo":"IWTP02-GNR-02-EDW-04002","title":"Rayis Pump House - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-07-01","actualRcv":"2026-07-10"},{"id":52,"sn":"52","docNo":"IWTP02-GNR-02-EDW-04003","title":"Rayis Pump House - Indoor Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-06-29","actualRcv":"2026-07-10"},{"id":53,"sn":"53","docNo":"IWTP02-GNR-02-EDW-05001","title":"Rayis VSD & VSD Transformers Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-25","actualSub":"2026-08-10","actualRcv":""},{"id":54,"sn":"54","docNo":"IWTP02-GNR-02-EDW-05002","title":"Rayis VSD & VSD Transformers Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-10","actualRcv":""},{"id":55,"sn":"55","docNo":"IWTP02-GNR-02-EDW-05003","title":"Rayis VSD & VSD Transformers Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-10","actualRcv":""},{"id":56,"sn":"56","docNo":"IWTP02-GNR-02-EDW-10001","title":"Rayis Administrative - Laboratory - Central Control Building \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-06","actualSub":"2026-08-10","actualRcv":""},{"id":57,"sn":"57","docNo":"IWTP02-GNR-02-EDW-10003","title":"Rayis Administrative - Laboratory - Central Control Buildng \u2013 Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-30","actualSub":"2026-08-10","actualRcv":""},{"id":58,"sn":"58","docNo":"IWTP02-GNR-02-EDW-11001","title":"Rayis Generator Building \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-30","actualSub":"2026-06-14","actualRcv":"2026-06-30"},{"id":59,"sn":"59","docNo":"IWTP02-GNR-02-EDW-11002","title":"Rayis Generator Building \u2013 Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-06-14","actualRcv":"2026-06-30"},{"id":60,"sn":"60","docNo":"IWTP02-GNR-02-EDW-11003","title":"Rayis Generator Building \u2013 Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-21","actualSub":"2026-06-14","actualRcv":"2026-06-30"},{"id":61,"sn":"61","docNo":"IWTP02-GNR-02-EDW-12001","title":"Rayis Fire Pumps Room \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-20","actualSub":"2026-06-11","actualRcv":"2026-06-18"},{"id":62,"sn":"62","docNo":"IWTP02-GNR-02-EDW-12002","title":"Rayis Fire Pumps Room \u2013 Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-06-11","actualRcv":"2026-06-18"},{"id":63,"sn":"63","docNo":"IWTP02-GNR-02-EDW-12003","title":"Rayis Fire Pumps Room - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-11","actualSub":"2026-06-11","actualRcv":"2026-06-18"},{"id":64,"sn":"64","docNo":"IWTP02-GNR-02-EDW-13001","title":"Rayis Electrical Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-25","actualSub":"2026-08-08","actualRcv":""},{"id":65,"sn":"65","docNo":"IWTP02-GNR-02-EDW-13002","title":"Rayis Electrical Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-15","actualSub":"2026-08-08","actualRcv":""},{"id":66,"sn":"66","docNo":"IWTP02-GNR-02-EDW-13003","title":"Rayis Electrical Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-04-20","actualSub":"2026-08-08","actualRcv":""},{"id":67,"sn":"67","docNo":"IWTP02-GNR-02-EDW-21001","title":"Rayis Steel Tanks - Earthing and Lightning Arrangement","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-03-20","actualSub":"2026-07-22","actualRcv":"2026-07-30"},{"id":68,"sn":"68","docNo":"IWTP02-GNR-02-EDW-21002","title":"Rayis Steel Tanks - Lightning Protection System","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-03","actualSub":"2026-07-22","actualRcv":"2026-07-30"},{"id":69,"sn":"69","docNo":"IWTP02-GNR-02-ELK-00001","title":"Rayis - Main LV Cable Schedule","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-27","actualSub":"2026-06-08","actualRcv":"2026-06-18"},{"id":70,"sn":"70","docNo":"IWTP02-GNR-02-ELK-00002","title":"Rayis - Secondary LV Cable Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-23","actualSub":"2026-07-09","actualRcv":"2026-07-16"},{"id":71,"sn":"71","docNo":"IWTP02-GNR-02-ELK-00003","title":"Rayis WSF - Electrical Cable Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-13","actualRcv":"2026-07-16"},{"id":72,"sn":"72","docNo":"IWTP02-GNR-02-IDT-00001","title":"Rayis - Indoor Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"B","targetDate":"2026-05-27","actualSub":"2026-06-17","actualRcv":"2026-07-01"},{"id":73,"sn":"73","docNo":"IWTP02-GNR-02-IDT-00002","title":"Rayis - Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-04-16","actualSub":"2026-07-04","actualRcv":"2026-07-17"},{"id":74,"sn":"74","docNo":"IWTP02-GNR-02-MDL-21001","title":"Rayis Steel Tanks - Mechanical Arrangement Drawing","discipline":"Mechanical","currentRev":"1X","status":"B","targetDate":"2026-02-25","actualSub":"2026-06-29","actualRcv":"2026-07-01"},{"id":75,"sn":"75","docNo":"IWTP02-GNR-02-MDP-00001","title":"Rayis - Main Piping System, General Arrangement & Sections","discipline":"Mechanical","currentRev":"0X","status":"D","targetDate":"2026-06-10","actualSub":"2026-06-13","actualRcv":"2026-06-17"},{"id":76,"sn":"76","docNo":"IWTP02-GNR-02-MDX-02201","title":"Rayis Water Quality Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-03-15","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":77,"sn":"77","docNo":"IWTP02-GNR-02-MDX-04201","title":"Rayis Pump House \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-15","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":78,"sn":"78","docNo":"IWTP02-GNR-02-MDX-05201","title":"Rayis VSD & VSD Transformers Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":79,"sn":"79","docNo":"IWTP02-GNR-02-MDX-06201","title":"Rayis Workshop & Storage Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":80,"sn":"80","docNo":"IWTP02-GNR-02-MDX-10201","title":"Rayis Administrative - Laboratory - Central Control Buildng \u2013 Drinking Water & Plumbing Layout","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":81,"sn":"81","docNo":"IWTP02-GNR-02-MDX-11201","title":"Rayis Generator Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-03-15","actualSub":"2026-07-18","actualRcv":"2026-07-23"},{"id":82,"sn":"82","docNo":"IWTP02-GNR-02-MDX-12201","title":"Rayis Fire Pumps Room \u2013 Drinking Water & Plumbing Layout","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":83,"sn":"83","docNo":"IWTP02-GNR-02-MDX-13201","title":"Rayis Electrical Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"1X","status":"A","targetDate":"2026-03-10","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":84,"sn":"84","docNo":"IWTP02-GNR-02-MDX-16201","title":"Rayis Security Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-03-30","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":85,"sn":"85","docNo":"IWTP02-GNR-02-MDX-17201","title":"Rayis Visitor Building \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":86,"sn":"86","docNo":"IWTP02-GNR-02-MDX-18201","title":"Rayis Main Gate House \u2013 Drinking Water & Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-07-18","actualRcv":"2026-07-23"},{"id":87,"sn":"87","docNo":"IWTP02-GNR-02-SDR-21201","title":"Rayis Steel Tanks - Tank Foundations Reinforcement Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"W","targetDate":"2026-02-26","actualSub":"2026-04-29","actualRcv":""},{"id":88,"sn":"88","docNo":"IWTP02-GNR-02-SDS-00001","title":"Fuel Tank Foundation Drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-05-30","actualSub":"2026-08-08","actualRcv":""},{"id":89,"sn":"89","docNo":"IWTP02-GNR-02-SDS-00002","title":"Rayis Power transformer. Structural drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-30","actualSub":"2026-08-08","actualRcv":""},{"id":90,"sn":"90","docNo":"IWTP02-GNR-02-SDS-00003","title":"Rayis distribution transformer. Structural drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-04-10","actualSub":"2026-08-09","actualRcv":""},{"id":91,"sn":"91","docNo":"IWTP02-GNR-02-SDS-00004","title":"Rayis - Vertical Surge Vessel Foundation Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-04-15","actualSub":"2026-08-08","actualRcv":""},{"id":92,"sn":"92","docNo":"IWTP02-GNR-02-SDS-00005","title":"Rayis Pipe Sleepers, Pipe supports, and valve supports - Structural drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-15","actualSub":"2026-05-09","actualRcv":"2026-05-26"},{"id":93,"sn":"93","docNo":"IWTP02-GNR-02-SDS-00007","title":"Rayis Channel - Structural Drawings","discipline":"Structural and Supports","currentRev":"1X","status":"W","targetDate":"2026-04-30","actualSub":"2026-08-09","actualRcv":""},{"id":94,"sn":"94","docNo":"IWTP02-GNR-02-SDS-00008","title":"Rayis Access Electrical Protection Manhole & Retaining Wall - Structural Drawings","discipline":"Structural and Supports","currentRev":"1X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-09","actualRcv":""},{"id":95,"sn":"95","docNo":"IWTP02-GNR-02-SDS-00018","title":"Rayis Power transformer - Steel Structure shed drawings","discipline":"Structural and Supports","currentRev":"0X","status":"C","targetDate":"2026-02-25","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":96,"sn":"96","docNo":"IWTP02-GNR-02-SDS-00019","title":"Rayis Distribution Transformer Shed - Structural Steel Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"C","targetDate":"2026-03-10","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":97,"sn":"97","docNo":"IWTP02-GNR-02-SDS-00020","title":"Rayis Fire Water Tank - Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-05-02","actualRcv":"2026-05-14"},{"id":98,"sn":"98","docNo":"IWTP02-GNR-02-SDS-00021","title":"Rayis Power Transformer - Steel Structure Grating Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"C","targetDate":"2026-03-05","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":99,"sn":"99","docNo":"IWTP02-GNR-02-SDS-02201","title":"Rayis Water Quality Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-05-09","actualRcv":""},{"id":100,"sn":"100","docNo":"IWTP02-GNR-02-SDS-04201","title":"Rayis Pump House - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"W","targetDate":"2026-04-12","actualSub":"2026-08-10","actualRcv":""},{"id":101,"sn":"101","docNo":"IWTP02-GNR-02-SDS-04401","title":"Rayis Pump House \u2013 Steel","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-06-06","actualRcv":"2026-06-20"},{"id":102,"sn":"102","docNo":"IWTP02-GNR-02-SDS-05201","title":"Rayis VSD & VSD Transformers Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-15","actualSub":"2026-08-09","actualRcv":""},{"id":103,"sn":"103","docNo":"IWTP02-GNR-02-SDS-06201","title":"Rayis Workshop & Storage Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-03-20","actualSub":"2026-08-08","actualRcv":""},{"id":104,"sn":"104","docNo":"IWTP02-GNR-02-SDS-07201","title":"Rayis - Compressors foundation drawing","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-03-05","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":105,"sn":"105","docNo":"IWTP02-GNR-02-SDS-07202","title":"Rayis - Surge Vessel Foundation Drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-05","actualSub":"2026-08-08","actualRcv":""},{"id":106,"sn":"106","docNo":"IWTP02-GNR-02-SDS-10201","title":"Rayis Administrative - Laboratory - Central Control Buildng - Structural Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-04-05","actualSub":"2026-08-08","actualRcv":""},{"id":107,"sn":"107","docNo":"IWTP02-GNR-02-SDS-11201","title":"Rayis Generator Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-03-15","actualSub":"2026-05-03","actualRcv":"2026-05-12"},{"id":108,"sn":"108","docNo":"IWTP02-GNR-02-SDS-11401","title":"Rayis Generator Building \u2013 Steel works","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-06-06","actualRcv":"2026-06-20"},{"id":109,"sn":"109","docNo":"IWTP02-GNR-02-SDS-12201","title":"Rayis Fire Pumps Room - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"B","targetDate":"2026-03-20","actualSub":"2026-07-14","actualRcv":"2026-08-06"},{"id":110,"sn":"110","docNo":"IWTP02-GNR-02-SDS-12401","title":"Rayis Fire Pumps Room \u2013 Steel works","discipline":"Structural and Supports","currentRev":"1X","status":"A","targetDate":"2026-02-10","actualSub":"2026-06-06","actualRcv":"2026-06-20"},{"id":111,"sn":"111","docNo":"IWTP02-GNR-02-SDS-13201","title":"Rayis Electrical Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"3X","status":"W","targetDate":"2026-02-25","actualSub":"2026-08-08","actualRcv":""},{"id":112,"sn":"112","docNo":"IWTP02-GNR-02-SDS-16201","title":"Rayis Security Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-14","actualRcv":"2026-08-06"},{"id":113,"sn":"113","docNo":"IWTP02-GNR-02-SDS-17201","title":"Rayis Visitor Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"1X","status":"B","targetDate":"2026-05-20","actualSub":"2026-07-14","actualRcv":"2026-08-06"},{"id":114,"sn":"114","docNo":"IWTP02-GNR-02-SDS-18201","title":"Rayis Main Gate House - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-25","actualSub":"2026-05-09","actualRcv":"2026-05-26"},{"id":115,"sn":"115","docNo":"IWTP02-GNR-02-VDT-02101","title":"Rayis Water Quality Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":116,"sn":"116","docNo":"IWTP02-GNR-02-VDT-04101","title":"Rayis Pump House \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-05","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":117,"sn":"117","docNo":"IWTP02-GNR-02-VDT-05101","title":"Rayis VSD & VSD Transformers Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-05-25","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":118,"sn":"118","docNo":"IWTP02-GNR-02-VDT-06101","title":"Rayis Workshop & Storage Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-05-25","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":119,"sn":"119","docNo":"IWTP02-GNR-02-VDT-10101","title":"Rayis Administrative - Laboratory - Central Control Buildng \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-20","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":120,"sn":"120","docNo":"IWTP02-GNR-02-VDT-12101","title":"Rayis Fire Pumps Room \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-30","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":121,"sn":"121","docNo":"IWTP02-GNR-02-VDT-13101","title":"Rayis Electrical Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-04-10","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":122,"sn":"122","docNo":"IWTP02-GNR-02-VDT-16101","title":"Rayis Security Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-04-25","actualSub":"2026-08-01","actualRcv":"2026-08-08"},{"id":123,"sn":"123","docNo":"IWTP02-GNR-02-VDT-17101","title":"Rayis Visitor Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-04-10","actualSub":"2026-08-08","actualRcv":""},{"id":124,"sn":"124","docNo":"IWTP02-GNR-04-ADA-19202","title":"Tap-off Building - Architectural Drawing","discipline":"Architecture","currentRev":"0X","status":"B","targetDate":"2026-05-20","actualSub":"2026-05-19","actualRcv":"2026-06-05"},{"id":125,"sn":"125","docNo":"IWTP02-GNR-04-EDU-00001","title":"Tap-Off - Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-07","actualSub":"2026-06-04","actualRcv":"2026-06-18"},{"id":126,"sn":"126","docNo":"IWTP02-GNR-04-EDW-00001","title":"Tap-Off - Earthing and Lightning layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-27","actualRcv":"2026-08-04"},{"id":127,"sn":"127","docNo":"IWTP02-GNR-04-ELK-00002","title":"Tap-Off - Electrical Cable Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-14","actualSub":"2026-07-12","actualRcv":"2026-07-16"},{"id":128,"sn":"128","docNo":"IWTP02-GNR-04-IDT-00002","title":"Tap-off - Instrument Panel & Distribution Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"C","targetDate":"2026-04-10","actualSub":"2026-07-15","actualRcv":"2026-07-27"},{"id":129,"sn":"129","docNo":"IWTP02-GNR-04-IDT-00004","title":"Tap-Off Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-05-19","actualSub":"2026-07-07","actualRcv":"2026-07-17"},{"id":130,"sn":"130","docNo":"IWTP02-GNR-04-IDW-00001","title":"Tap-off - Cable Schedule","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-04-30","actualSub":"2026-08-02","actualRcv":"2026-08-07"},{"id":131,"sn":"131","docNo":"IWTP02-GNR-04-MDP-00002","title":"Hydraulic Profile","discipline":"Mechanical","currentRev":"1X","status":"B","targetDate":"2026-05-25","actualSub":"2026-06-29","actualRcv":"2026-06-30"},{"id":132,"sn":"132","docNo":"IWTP02-GNR-04-MDP-00011","title":"Pipeline Alignment Sheets from PK. 0.00 to PK. 43.00. IFC.","discipline":"Mechanical","currentRev":"0X","status":"B","targetDate":"2026-04-30","actualSub":"2026-07-22","actualRcv":"2026-07-29"},{"id":133,"sn":"133","docNo":"IWTP02-GNR-04-MDP-00012","title":"Pipeline Alignment Sheets from PK. 43.00 to PK. 90.00 IFC","discipline":"Mechanical","currentRev":"0X","status":"C","targetDate":"2026-05-30","actualSub":"2026-08-10","actualRcv":"2026-08-13"},{"id":134,"sn":"134","docNo":"IWTP02-GNR-04-MDX-00001","title":"Tap-off building \u2013 Plumbing Drawing","discipline":"Mechanical","currentRev":"0X","status":"A","targetDate":"2026-05-30","actualSub":"2026-08-03","actualRcv":"2026-08-06"},{"id":135,"sn":"135","docNo":"IWTP02-GNR-04-SDS-00002","title":"Rayis Access culvert - Structural drawings","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-04-25","actualSub":"2026-04-29","actualRcv":"2026-05-21"},{"id":136,"sn":"136","docNo":"IWTP02-GNR-04-SDS-19201","title":"Tap-off Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-04-10","actualSub":"2026-05-09","actualRcv":"2026-05-26"},{"id":137,"sn":"137","docNo":"IWTP02-GNR-04-VDT-19101","title":"Tap-off Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"A","targetDate":"2026-05-05","actualSub":"2026-07-25","actualRcv":"2026-08-03"},{"id":138,"sn":"138","docNo":"IWTP02-GNR-05-ADA-02202","title":"Rabigh WQM Building. Architectural Drawing","discipline":"Architecture","currentRev":"1X","status":"W","targetDate":"2026-05-10","actualSub":"2026-07-19","actualRcv":""},{"id":139,"sn":"139","docNo":"IWTP02-GNR-05-ADA-15202","title":"Rabigh Tie-in Building - Architectural Drawing","discipline":"Architecture","currentRev":"1X","status":"W","targetDate":"2026-04-25","actualSub":"2026-07-19","actualRcv":""},{"id":140,"sn":"140","docNo":"IWTP02-GNR-05-CDS-00001","title":"Rabigh generator foundation - Structural drawings","discipline":"Civil","currentRev":"2X","status":"W","targetDate":"2026-03-05","actualSub":"2026-08-10","actualRcv":""},{"id":141,"sn":"141","docNo":"IWTP02-GNR-05-CDZ-00001","title":"Rabigh Tie-in Building - Pre-cast Drawings","discipline":"Civil","currentRev":"1X","status":"A","targetDate":"2026-02-25","actualSub":"2026-05-16","actualRcv":"2026-05-26"},{"id":142,"sn":"142","docNo":"IWTP02-GNR-05-EDU-00001","title":"Rabigh - LV Single Line Diagram","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-07","actualSub":"2026-06-03","actualRcv":"2026-06-18"},{"id":143,"sn":"143","docNo":"IWTP02-GNR-05-EDW-00001","title":"Rabigh - Main Outdoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-11","actualSub":"2026-08-08","actualRcv":""},{"id":144,"sn":"144","docNo":"IWTP02-GNR-05-EDW-00002","title":"Rabigh - Main Earthing Grid Layout","discipline":"Electric","currentRev":"0X","status":"W","targetDate":"2026-05-30","actualSub":"2026-08-09","actualRcv":""},{"id":145,"sn":"145","docNo":"IWTP02-GNR-05-EDW-00003","title":"Rabigh - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-05","actualSub":"2026-07-23","actualRcv":"2026-07-30"},{"id":146,"sn":"146","docNo":"IWTP02-GNR-05-EDW-00006","title":"Rabigh Water Quality Building \u2013 Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-01","actualSub":"2026-06-25","actualRcv":"2026-07-10"},{"id":147,"sn":"147","docNo":"IWTP02-GNR-05-EDW-00007","title":"Rabigh Water Quality Building \u2013 Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-04-30","actualSub":"2026-06-24","actualRcv":"2026-06-30"},{"id":148,"sn":"148","docNo":"IWTP02-GNR-05-EDW-00008","title":"Rabigh Water Quality Building \u2013 Lighting Layout","discipline":"Electric","currentRev":"0X","status":"A","targetDate":"2026-05-16","actualSub":"2026-06-28","actualRcv":"2026-07-10"},{"id":149,"sn":"149","docNo":"IWTP02-GNR-05-EDW-15001","title":"Rabigh Tie-in Building - Indoor Cable Route Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-05-29","actualSub":"2026-08-04","actualRcv":"2026-08-06"},{"id":150,"sn":"150","docNo":"IWTP02-GNR-05-EDW-15002","title":"Rabigh Tie-in Building - Earthing and Lightning Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-20","actualSub":"2026-08-04","actualRcv":"2026-08-06"},{"id":151,"sn":"151","docNo":"IWTP02-GNR-05-EDW-15003","title":"Rabigh Tie-in Building - Lighting Layout","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-22","actualSub":"2026-08-04","actualRcv":"2026-08-13"},{"id":152,"sn":"152","docNo":"IWTP02-GNR-05-ELK-00001","title":"Rabigh - Electric Cables Schedule","discipline":"Electric","currentRev":"0X","status":"B","targetDate":"2026-04-19","actualSub":"2026-07-11","actualRcv":"2026-07-16"},{"id":153,"sn":"153","docNo":"IWTP02-GNR-05-IDT-00002","title":"Rabigh - Instrument Layout","discipline":"Instrumentation and Control","currentRev":"0X","status":"D","targetDate":"2026-04-15","actualSub":"2026-07-05","actualRcv":"2026-07-17"},{"id":154,"sn":"154","docNo":"IWTP02-GNR-05-SDS-00001","title":"Rabigh Pipe Sleepers, Pipe supports, and valve supports - Structural drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-05-10","actualSub":"2026-05-09","actualRcv":"2026-05-26"},{"id":155,"sn":"155","docNo":"IWTP02-GNR-05-SDS-00003","title":"Rabigh Water Quality Monitoring Building - Structural Drawings","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-04-15","actualSub":"2026-07-04","actualRcv":"2026-07-23"},{"id":156,"sn":"156","docNo":"IWTP02-GNR-05-SDS-07201","title":"Rabigh \u2013 Compressors foundation drawing","discipline":"Structural and Supports","currentRev":"2X","status":"W","targetDate":"2026-03-15","actualSub":"2026-08-09","actualRcv":""},{"id":157,"sn":"157","docNo":"IWTP02-GNR-05-SDS-07202","title":"Rabigh \u2013 Surge Vessel foundation drawing","discipline":"Structural and Supports","currentRev":"0X","status":"B","targetDate":"2026-03-15","actualSub":"2026-06-29","actualRcv":"2026-07-18"},{"id":158,"sn":"158","docNo":"IWTP02-GNR-05-SDS-15201","title":"Rabigh Tie-in Building - Structural Drawing","discipline":"Structural and Supports","currentRev":"0X","status":"A","targetDate":"2026-05-10","actualSub":"2026-05-02","actualRcv":"2026-05-26"},{"id":159,"sn":"159","docNo":"IWTP02-GNR-05-VDT-00001","title":"Rabigh Water Quality Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-05-15","actualSub":"2026-08-10","actualRcv":""},{"id":160,"sn":"160","docNo":"IWTP02-GNR-05-VDT-15101","title":"Rabigh Tie-in Building \u2013 HVAC Drawings and P&ID","discipline":"HVAC","currentRev":"0X","status":"W","targetDate":"2026-05-10","actualSub":"2026-08-10","actualRcv":""},{"id":161,"sn":"161","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":162,"sn":"162","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":163,"sn":"163","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":164,"sn":"164","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":165,"sn":"165","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":166,"sn":"166","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":167,"sn":"167","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":168,"sn":"168","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":169,"sn":"169","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":170,"sn":"170","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":171,"sn":"171","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":172,"sn":"172","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":173,"sn":"173","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":174,"sn":"174","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":175,"sn":"175","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":176,"sn":"176","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":177,"sn":"177","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":178,"sn":"178","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":179,"sn":"179","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":180,"sn":"180","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":181,"sn":"181","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":182,"sn":"182","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":183,"sn":"183","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":184,"sn":"184","docNo":"","title":"","discipline":"Electric","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":185,"sn":"185","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":186,"sn":"186","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":187,"sn":"187","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":188,"sn":"188","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":189,"sn":"189","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":190,"sn":"190","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":191,"sn":"191","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":192,"sn":"192","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":193,"sn":"193","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":194,"sn":"194","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":195,"sn":"195","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":196,"sn":"196","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":197,"sn":"197","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":198,"sn":"198","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":199,"sn":"199","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":200,"sn":"200","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":201,"sn":"201","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":202,"sn":"202","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":203,"sn":"203","docNo":"","title":"","discipline":"Instrumentation and Control","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":204,"sn":"204","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":205,"sn":"205","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":206,"sn":"206","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":207,"sn":"207","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":208,"sn":"208","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":209,"sn":"209","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":210,"sn":"210","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":211,"sn":"211","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":212,"sn":"212","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":213,"sn":"213","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":214,"sn":"214","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":215,"sn":"215","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":216,"sn":"216","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":217,"sn":"217","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":218,"sn":"218","docNo":"","title":"","discipline":"Mechanical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":219,"sn":"219","docNo":"","title":"","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":220,"sn":"220","docNo":"","title":"","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":221,"sn":"221","docNo":"","title":"","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":222,"sn":"222","docNo":"","title":"","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":223,"sn":"223","docNo":"","title":"","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":224,"sn":"224","docNo":"","title":"","discipline":"Structural and Supports","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":225,"sn":"225","docNo":"","title":"","discipline":"Civil","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":226,"sn":"226","docNo":"","title":"","discipline":"Civil","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":227,"sn":"227","docNo":"","title":"","discipline":"Civil","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":228,"sn":"228","docNo":"","title":"","discipline":"HVAC","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":229,"sn":"229","docNo":"","title":"","discipline":"HVAC","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":230,"sn":"230","docNo":"","title":"","discipline":"General and/or Multidisciplinary","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":231,"sn":"231","docNo":"","title":"","discipline":"General and/or Multidisciplinary","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""},{"id":232,"sn":"232","docNo":"","title":"","discipline":"Earthworks and Geotechnical","currentRev":"","status":"Not Submitted","targetDate":"","actualSub":"","actualRcv":""}];
+
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const days=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const submitted=r=>!!r.actualSub;
+const isOpen=r=>!submitted(r)||r.status==='W'||REJECTED.includes(r.status);
+const canEdit=()=>LIVE&&USER&&USER.role!=='viewer';
+const canAdmin=()=>LIVE&&USER&&USER.role==='admin';
+const nowTs=()=>new Date().toISOString();
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('on'),2300);}
+
+function msgBox(title,icon,body,acts){
+  const w=document.getElementById('msgwrap'),m=document.getElementById('msg');
+  m.innerHTML=`<h4>${icon?icon+' ':''}${esc(title)}</h4><div class="body">${body}</div>
+    <div class="acts">${(acts||[['Close',null,'']]).map((a,i)=>
+      `<button class="btn ${a[2]||''}" data-i="${i}">${esc(a[0])}</button>`).join('')}</div>`;
+  w.classList.add('on');
+  m.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{
+    const fn=(acts||[['Close',null,'']])[+b.dataset.i][1];
+    w.classList.remove('on'); if(fn)fn();});
+  return m;
+}
+const closeMsg=()=>document.getElementById('msgwrap').classList.remove('on');
+document.getElementById('msgwrap').addEventListener('click',e=>{if(e.target.id==='msgwrap')closeMsg();});
+
+/* ---------------- api ---------------- */
+async function api(path,opts){
+  const r=await fetch(SB_URL+'/rest/v1/'+path,{headers:H,...opts});
+  if(!r.ok)throw new Error(r.status+' '+await r.text());
+  return r.status===204?null:r.json();
+}
+async function apiUpdate(id,patch){ if(LIVE) await api('asbuilts?id=eq.'+id,{method:'PATCH',body:JSON.stringify(patch)}); }
+async function apiInsert(row){ const r=await api('asbuilts',{method:'POST',
+  headers:{...H,Prefer:'return=representation'},body:JSON.stringify(row)}); return r[0]; }
+async function apiDelete(id){ if(LIVE) await api('asbuilts?id=eq.'+id,{method:'DELETE'}); }
+async function logAct(action,rec,field,oldV,newV){
+  if(!LIVE)return;
+  const a={projectId:PROJ,ts:nowTs(),action,tbl:'asbuilts',recId:rec&&rec.id,
+    recName:(rec&&rec.docNo)||'',field:field||'',oldVal:String(oldV??''),newVal:String(newV??''),
+    actor:(USER&&USER.name)||''};
+  ACTS.unshift(a);
+  try{await api('activity',{method:'POST',body:JSON.stringify(a)});}catch(e){}
+}
+
+/* ---------------- undo / redo ---------------- */
+let UNDO=[],REDO=[],_tx=null,_replaying=false;
+function txBegin(label){if(_tx||_replaying)return false;_tx={label,ops:[]};return true;}
+function txPush(op){ if(_replaying)return;
+  if(_tx)_tx.ops.push(op); else {UNDO.push({label:'edit',ops:[op]});REDO.length=0;trimUndo();} }
+function txEnd(){ if(_tx&&_tx.ops.length){UNDO.push(_tx);REDO.length=0;trimUndo();} _tx=null; updateUndoBtns(); }
+function txAbort(){_tx=null;}
+function trimUndo(){ while(UNDO.length>60)UNDO.shift(); updateUndoBtns(); }
+async function applyOp(op,dir){
+  const v=dir<0?op.from:op.to;
+  if(op.t==='set'){
+    const r=AB.find(x=>x.id===op.id); if(!r)return;
+    r[op.k]=v; await apiUpdate(op.id,{[op.k]:v});
+  }else if(op.t==='add'){
+    if(dir<0){ AB=AB.filter(x=>x.id!==op.id); await apiDelete(op.id); }
+    else { const row=await apiInsert(op.row); AB.push(row); op.id=row.id; }
+  }else if(op.t==='del'){
+    if(dir<0){ const row=await apiInsert(op.row); AB.push(row); op.id=row.id; }
+    else { AB=AB.filter(x=>x.id!==op.id); await apiDelete(op.id); }
+  }
+}
+async function undo(){
+  if(!UNDO.length)return toast('Nothing to undo');
+  const t=UNDO.pop(); _replaying=true;
+  for(let i=t.ops.length-1;i>=0;i--) await applyOp(t.ops[i],-1);
+  _replaying=false; REDO.push(t); updateUndoBtns(); refresh(); toast('Undid '+t.label);
+}
+async function redo(){
+  if(!REDO.length)return toast('Nothing to redo');
+  const t=REDO.pop(); _replaying=true;
+  for(const op of t.ops) await applyOp(op,1);
+  _replaying=false; UNDO.push(t); updateUndoBtns(); refresh(); toast('Redid '+t.label);
+}
+function updateUndoBtns(){
+  const u=document.getElementById('b-undo'),r=document.getElementById('b-redo');
+  if(u)u.disabled=!UNDO.length||!canEdit(); if(r)r.disabled=!REDO.length||!canEdit();
+}
+async function setCell(row,k,val,silent){
+  const before=row[k]??'';
+  if(String(before)===String(val))return;
+  row[k]=val;
+  txPush({t:'set',id:row.id,k,from:before,to:val});
+  try{ await apiUpdate(row.id,{[k]:val}); await logAct('edit',row,k,before,val); }
+  catch(e){ row[k]=before; toast('Not saved — check your connection'); console.error(e); return; }
+  if(!silent)refresh();
+}
+
+/* ---------------- column prefs ---------------- */
+function visCols(){ return PREFS.order.map(k=>COLBY[k]).filter(c=>c&&!PREFS.hidden.includes(c.k)); }
+function colW(c){ return PREFS.w[c.k]||c.w; }
+async function savePrefs(){
+  try{ localStorage.setItem('ab-prefs',JSON.stringify(PREFS)); }catch(e){}
+  if(LIVE){ try{ await api('projects?id=eq.'+PROJ,{method:'PATCH',
+    body:JSON.stringify({colprefs:JSON.stringify(PREFS)})}); }catch(e){} }
+}
+function loadPrefs(fromDb){
+  let p=null;
+  try{ p=JSON.parse(fromDb||localStorage.getItem('ab-prefs')||'null'); }catch(e){}
+  if(p&&p.order){
+    PREFS.order=COLS.map(c=>c.k).sort((a,b)=>{
+      const ia=p.order.indexOf(a),ib=p.order.indexOf(b);
+      return (ia<0?99:ia)-(ib<0?99:ib);});
+    PREFS.hidden=(p.hidden||[]).filter(k=>COLBY[k]);
+    PREFS.w=p.w||{}; PREFS.rowh=p.rowh||24;
+  }
+}
+
+/* ================= window manager ================= */
+const WINS=new Map(); let winSeq=0, focused=null;
+const desk=()=>document.getElementById('desktop');
+
+function createWindow(kind,title,sub,x,y,w,h){
+  const ex=[...WINS.values()].find(v=>v.kind===kind);
+  if(ex){focusWin(ex.id);return ex;}
+  const id='w'+(++winSeq);
+  const D=desk();
+  const win={id,kind,title,sub,x:x??(24+WINS.size*26),y:y??(18+WINS.size*22),
+    w:w??Math.min(1180,D.clientWidth-60),h:h??Math.min(660,D.clientHeight-50),min:false,max:false};
+  const el=document.createElement('div');
+  el.className='win';el.id=id;
+  el.innerHTML=`<div class="wbar"><div class="wt">${esc(title)}<small>${esc(sub||'')}</small></div>
+      <button class="wb" data-w="min" title="Minimise">–</button>
+      <button class="wb" data-w="max" title="Maximise">▢</button>
+      <button class="wb" data-w="close" title="Close">✕</button></div>
+    <div class="wbody"></div>
+    <div class="grip e"></div><div class="grip s"></div><div class="grip se"></div>`;
+  D.appendChild(el);
+  win.el=el; win.body=el.querySelector('.wbody');
+  WINS.set(id,win); applyRect(win); focusWin(id);
+  el.addEventListener('pointerdown',()=>focusWin(id),true);
+  el.querySelector('.wbar').addEventListener('pointerdown',e=>{
+    if(e.target.closest('.wb'))return; startDrag(e,win);});
+  el.querySelectorAll('.wb').forEach(b=>b.onclick=()=>{
+    const a=b.dataset.w;
+    if(a==='close')closeWin(id);
+    else if(a==='min'){win.min=true;applyRect(win);renderDock();}
+    else{win.max=!win.max;applyRect(win);} });
+  el.querySelector('.grip.e').addEventListener('pointerdown',e=>startResize(e,win,1,0));
+  el.querySelector('.grip.s').addEventListener('pointerdown',e=>startResize(e,win,0,1));
+  el.querySelector('.grip.se').addEventListener('pointerdown',e=>startResize(e,win,1,1));
+  renderDock();
+  return win;
+}
+function applyRect(w){
+  const D=desk(), el=w.el;
+  if(w.min){el.style.display='none';return;}
+  el.style.display='flex';
+  if(w.max){Object.assign(el.style,{left:'6px',top:'6px',width:(D.clientWidth-12)+'px',height:(D.clientHeight-12)+'px'});return;}
+  w.x=Math.max(-w.w+120,Math.min(w.x,D.clientWidth-80));
+  w.y=Math.max(0,Math.min(w.y,D.clientHeight-40));
+  Object.assign(el.style,{left:w.x+'px',top:w.y+'px',width:w.w+'px',height:w.h+'px'});
+}
+function focusWin(id){
+  focused=id;
+  [...WINS.values()].forEach(w=>{w.el.classList.toggle('focus',w.id===id);});
+  const w=WINS.get(id); if(w){w.el.style.zIndex=++winSeq+100; if(w.min){w.min=false;applyRect(w);renderDock();}}
+}
+function closeWin(id){const w=WINS.get(id);if(!w)return;w.el.remove();WINS.delete(id);renderDock();}
+function arrangeWins(){
+  const list=[...WINS.values()].filter(w=>!w.min); if(!list.length)return;
+  const D=desk(), cols=Math.ceil(Math.sqrt(list.length)), rows=Math.ceil(list.length/cols);
+  list.forEach((w,i)=>{ w.max=false;
+    w.w=Math.floor(D.clientWidth/cols)-10; w.h=Math.floor(D.clientHeight/rows)-10;
+    w.x=(i%cols)*(w.w+8)+6; w.y=Math.floor(i/cols)*(w.h+8)+6; applyRect(w);});
+  toast('Windows tidied');
+}
+function renderDock(){
+  const d=document.getElementById('dock');
+  const btns=[...WINS.values()].map(w=>
+    `<button data-d="${w.id}">${w.min?'▫ ':''}${esc(w.title)}</button>`).join('');
+  d.innerHTML=btns+`<span class="st" id="dockst">${dockStatus()}</span>`;
+  d.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>focusWin(b.dataset.d));
+}
+function dockStatus(){
+  const s=stats();
+  return (LIVE?'● live':'● snapshot, read-only')+' · '+s.t+' drawings · '+
+    s.sub+' submitted · '+s.ur+' under review'+(USER?' · '+esc(USER.name):'');
+}
+let _drag=null;
+function startDrag(e,w){
+  if(w.max)return;
+  _drag={w,dx:e.clientX-w.x,dy:e.clientY-w.y,mode:'move'};
+  e.target.setPointerCapture(e.pointerId);
+  document.addEventListener('pointermove',dragMove);
+  document.addEventListener('pointerup',dragEnd,{once:true});
+}
+function startResize(e,w,ex,ey){
+  if(w.max)return;
+  _drag={w,sx:e.clientX,sy:e.clientY,w0:w.w,h0:w.h,ex,ey,mode:'size'};
+  e.target.setPointerCapture(e.pointerId);
+  document.addEventListener('pointermove',dragMove);
+  document.addEventListener('pointerup',dragEnd,{once:true});
+  e.preventDefault();
+}
+function dragMove(e){
+  if(!_drag)return; const w=_drag.w, D=desk(), g=document.getElementById('snapghost');
+  if(_drag.mode==='move'){
+    w.x=e.clientX-_drag.dx; w.y=e.clientY-_drag.dy; applyRect(w);
+    const r=D.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+    let z=null;
+    if(px<28)z={left:0,top:0,width:D.clientWidth/2,height:D.clientHeight};
+    else if(px>D.clientWidth-28)z={left:D.clientWidth/2,top:0,width:D.clientWidth/2,height:D.clientHeight};
+    else if(py<10)z={left:0,top:0,width:D.clientWidth,height:D.clientHeight};
+    _drag.zone=z;
+    if(z){Object.assign(g.style,{display:'block',left:z.left+'px',top:z.top+'px',
+      width:z.width+'px',height:z.height+'px'});}
+    else g.style.display='none';
+  }else{
+    if(_drag.ex)w.w=Math.max(340,_drag.w0+(e.clientX-_drag.sx));
+    if(_drag.ey)w.h=Math.max(190,_drag.h0+(e.clientY-_drag.sy));
+    applyRect(w);
+  }
+}
+function dragEnd(){
+  document.removeEventListener('pointermove',dragMove);
+  document.getElementById('snapghost').style.display='none';
+  if(_drag&&_drag.zone){const w=_drag.w,z=_drag.zone;
+    w.x=z.left;w.y=z.top;w.w=z.width;w.h=z.height;w.max=false;applyRect(w);}
+  _drag=null;
+}
+window.addEventListener('resize',()=>{ [...WINS.values()].forEach(applyRect); checkMode(); });
+
+/* ================= grid engine ================= */
+let GRID=null;   /* {win, rows, sel:{r1,c1,r2,c2}, cur:{r,c}, sort:{k,dir}, filters} */
+
+function openRegister(){
+  const w=createWindow('reg','Register','as-built drawings');
+  GRID={win:w, sort:{k:'sn',dir:1}, q:'', fd:'', fs:'', fx:'',
+        sel:null, cur:{r:0,c:0}, editing:null};
+  renderGrid();
+  return w;
+}
+function gridRows(){
+  const q=GRID.q.toLowerCase();
+  let rows=AB.filter(r=>{
+    if(q&&!((r.docNo||'')+' '+(r.title||'')).toLowerCase().includes(q))return false;
+    if(GRID.fd&&r.discipline!==GRID.fd)return false;
+    if(GRID.fs&&(r.status||'Not Submitted')!==GRID.fs)return false;
+    if(GRID.fx==='open'&&!isOpen(r))return false;
+    if(GRID.fx==='ur'&&r.status!=='W')return false;
+    if(GRID.fx==='late'&&!(!APPROVED.includes(r.status)&&r.targetDate&&r.targetDate<today))return false;
+    if(GRID.fx==='ns'&&r.status!=='Not Submitted')return false;
+    return true;
+  });
+  const {k,dir}=GRID.sort, c=COLBY[k];
+  rows.sort((a,b)=>{
+    const va=c&&c.calc?c.calc(a):(a[k]??''), vb=c&&c.calc?c.calc(b):(b[k]??'');
+    const ea=String(va).trim()==='', eb=String(vb).trim()==='';
+    if(ea!==eb)return ea?1:-1;          /* blanks always sit at the bottom */
+    if(ea&&eb)return 0;
+    const na=parseFloat(va),nb=parseFloat(vb);
+    if(!isNaN(na)&&!isNaN(nb))return (na-nb)*dir;
+    return String(va).localeCompare(String(vb))*dir;
+  });
+  return rows;
+}
+function cellText(r,c){
+  const v=c.calc?c.calc(r):(r[c.k]??'');
+  if(c.pill){const k=v||'Not Submitted';
+    return `<span class="pill ${k==='Not Submitted'?'s-N':'s-'+k}">${esc(k==='Not Submitted'?'Not sub.':k)}</span>`;}
+  return esc(v);
+}
+function renderGrid(){
+  const w=GRID.win; if(!w)return;
+  const rows=gridRows(); GRID.rows=rows;
+  const cs=visCols();
+  const tools=`<div class="wtools">
+    <input class="f" id="gq" placeholder="Search number or name" style="min-width:210px;flex:1" value="${esc(GRID.q)}">
+    <select class="f" id="gfd"><option value="">All disciplines</option>${
+      DISCS.map(d=>`<option${GRID.fd===d?' selected':''}>${esc(d)}</option>`).join('')}</select>
+    <select class="f" id="gfs"><option value="">All statuses</option>${
+      CODES.map(k=>`<option${GRID.fs===k?' selected':''}>${esc(k)}</option>`).join('')}</select>
+    <select class="f" id="gfx">
+      <option value="">Everything</option>
+      <option value="open"${GRID.fx==='open'?' selected':''}>Open only</option>
+      <option value="ur"${GRID.fx==='ur'?' selected':''}>Under review</option>
+      <option value="late"${GRID.fx==='late'?' selected':''}>Past target</option>
+      <option value="ns"${GRID.fx==='ns'?' selected':''}>Not submitted</option>
+    </select>
+    <button class="btn" id="gadd"${canEdit()?'':' disabled'}>Add drawing</button>
+    <button class="btn" id="gdel"${canEdit()?'':' disabled'}>Delete selected</button>
+    <button class="btn" id="gcols">Columns</button>
+    <span class="hint" id="gcount"></span></div>`;
+  const head=`<thead><tr><th class="corner"></th>${cs.map((c,i)=>
+      `<th data-c="${i}" data-k="${c.k}" draggable="${canEdit()}" style="width:${colW(c)}px;min-width:${colW(c)}px">${
+        esc(c.t)}${GRID.sort.k===c.k?(GRID.sort.dir>0?' ▲':' ▼'):''}<span class="cr" data-rz="${c.k}"></span></th>`).join('')}</tr></thead>`;
+  const body=`<tbody>${rows.map((r,ri)=>
+    `<tr data-r="${ri}" data-id="${r.id}" class="${r.docNo?'':'dim'}" style="height:${PREFS.rowh}px">
+      <th data-rh="${ri}">${ri+1}<span class="rr"></span></th>${
+      cs.map((c,ci)=>`<td data-r="${ri}" data-c="${ci}" class="${c.cls||''}">${cellText(r,c)}</td>`).join('')}
+    </tr>`).join('')}</tbody>`;
+  w.body.innerHTML=tools+`<div class="gwrap" id="gwrap"><table class="g">${head}${body}</table></div>`;
+  document.getElementById('gcount').textContent=rows.length+' of '+AB.length;
+  wireGrid();
+  paintSel();
+}
+function wireGrid(){
+  const $=id=>document.getElementById(id);
+  $('gq').oninput=e=>{GRID.q=e.target.value;const s=e.target.selectionStart;renderGrid();
+    const n=document.getElementById('gq');n.focus();n.setSelectionRange(s,s);};
+  $('gfd').onchange=e=>{GRID.fd=e.target.value;renderGrid();};
+  $('gfs').onchange=e=>{GRID.fs=e.target.value;renderGrid();};
+  $('gfx').onchange=e=>{GRID.fx=e.target.value;renderGrid();};
+  $('gadd').onclick=addRow;
+  $('gdel').onclick=deleteSelected;
+  $('gcols').onclick=openCols;
+
+  const wrap=$('gwrap'), tbl=wrap.querySelector('table');
+  /* sort + column drag + resize */
+  tbl.querySelectorAll('thead th[data-k]').forEach(th=>{
+    th.onclick=e=>{ if(e.target.classList.contains('cr'))return;
+      const k=th.dataset.k;
+      GRID.sort=(GRID.sort.k===k)?{k,dir:-GRID.sort.dir}:{k,dir:1}; renderGrid();};
+    th.ondragstart=e=>{e.dataTransfer.setData('text/plain',th.dataset.k);th.classList.add('drag');};
+    th.ondragend=()=>th.classList.remove('drag');
+    th.ondragover=e=>e.preventDefault();
+    th.ondrop=e=>{e.preventDefault();
+      const from=e.dataTransfer.getData('text/plain'), to=th.dataset.k;
+      if(!from||from===to)return;
+      const o=PREFS.order.filter(k=>k!==from), i=o.indexOf(to);
+      o.splice(i<0?o.length:i,0,from); PREFS.order=o; savePrefs(); renderGrid();};
+    const cr=th.querySelector('.cr');
+    cr.addEventListener('pointerdown',e=>{
+      e.stopPropagation();e.preventDefault();
+      const k=cr.dataset.rz, x0=e.clientX, w0=colW(COLBY[k]);
+      const mv=ev=>{PREFS.w[k]=Math.max(46,w0+(ev.clientX-x0));
+        th.style.width=th.style.minWidth=PREFS.w[k]+'px';};
+      const up=()=>{document.removeEventListener('pointermove',mv);savePrefs();renderGrid();};
+      document.addEventListener('pointermove',mv);
+      document.addEventListener('pointerup',up,{once:true});});
+  });
+  /* row height */
+  tbl.querySelectorAll('tbody th .rr').forEach(rr=>{
+    rr.addEventListener('pointerdown',e=>{
+      e.stopPropagation();e.preventDefault();
+      const y0=e.clientY,h0=PREFS.rowh;
+      const mv=ev=>{PREFS.rowh=Math.max(20,Math.min(80,h0+(ev.clientY-y0)));
+        tbl.querySelectorAll('tbody tr').forEach(tr=>tr.style.height=PREFS.rowh+'px');};
+      const up=()=>{document.removeEventListener('pointermove',mv);savePrefs();};
+      document.addEventListener('pointermove',mv);
+      document.addEventListener('pointerup',up,{once:true});});
+  });
+  /* row header selects the whole row */
+  tbl.querySelectorAll('tbody th[data-rh]').forEach(th=>{
+    th.onclick=()=>{const r=+th.dataset.rh;
+      GRID.sel={r1:r,c1:0,r2:r,c2:visCols().length-1};GRID.cur={r,c:0};paintSel();};});
+
+  /* cell selection */
+  let dragging=false;
+  tbl.addEventListener('pointerdown',e=>{
+    const td=e.target.closest('td[data-c]'); if(!td)return;
+    const r=+td.dataset.r,c=+td.dataset.c;
+    if(e.shiftKey&&GRID.sel){GRID.sel={...GRID.sel,r2:r,c2:c};}
+    else {GRID.sel={r1:r,c1:c,r2:r,c2:c};GRID.cur={r,c};}
+    dragging=true;paintSel();
+    wrap.focus();
+  });
+  tbl.addEventListener('pointerover',e=>{
+    if(!dragging)return; const td=e.target.closest('td[data-c]'); if(!td)return;
+    GRID.sel={...GRID.sel,r2:+td.dataset.r,c2:+td.dataset.c};paintSel();});
+  document.addEventListener('pointerup',()=>{dragging=false;},{once:false});
+  tbl.addEventListener('dblclick',e=>{
+    const td=e.target.closest('td[data-c]'); if(td)beginEdit(+td.dataset.r,+td.dataset.c);});
+  wrap.tabIndex=0;
+  wrap.addEventListener('keydown',gridKey);
+}
+function paintSel(){
+  const tbl=document.querySelector('#gwrap table'); if(!tbl||!GRID.sel)return;
+  const {r1,c1,r2,c2}=GRID.sel;
+  const [ra,rb]=[Math.min(r1,r2),Math.max(r1,r2)],[ca,cb]=[Math.min(c1,c2),Math.max(c1,c2)];
+  tbl.querySelectorAll('td[data-c]').forEach(td=>{
+    const r=+td.dataset.r,c=+td.dataset.c;
+    td.classList.toggle('sel',r>=ra&&r<=rb&&c>=ca&&c<=cb);
+    td.classList.toggle('cur',r===GRID.cur.r&&c===GRID.cur.c);});
+}
+function selCells(){
+  if(!GRID.sel)return[];
+  const {r1,c1,r2,c2}=GRID.sel, cs=visCols(), out=[];
+  for(let r=Math.min(r1,r2);r<=Math.max(r1,r2);r++)
+    for(let c=Math.min(c1,c2);c<=Math.max(c1,c2);c++)
+      if(GRID.rows[r]&&cs[c])out.push({row:GRID.rows[r],col:cs[c],r,c});
+  return out;
+}
+function beginEdit(r,c){
+  const cs=visCols(), col=cs[c], row=GRID.rows[r];
+  if(!col||!row)return;
+  if(!canEdit())return toast(LIVE?'Your account cannot edit':'Read-only snapshot');
+  if(col.ro)return toast(col.t+' is worked out automatically');
+  const td=document.querySelector(`td[data-r="${r}"][data-c="${c}"]`); if(!td)return;
+  GRID.editing={r,c};
+  const cur=row[col.k]??'';
+  let el;
+  if(col.opts){ el=document.createElement('select');
+    el.innerHTML=col.opts().map(o=>`<option${String(cur)===String(o)?' selected':''}>${esc(o)}</option>`).join('');
+  }else{ el=document.createElement('input'); el.type=col.date?'date':'text'; el.value=cur; }
+  el.className='cellin'; td.appendChild(el); el.focus(); if(el.select)el.select();
+  const done=async(commit)=>{
+    if(GRID.editing===null)return; GRID.editing=null;
+    const v=el.value;
+    el.remove();
+    if(commit)await setCell(row,col.k,v);
+    else renderGrid();
+    const wrap=document.getElementById('gwrap'); if(wrap)wrap.focus();
+  };
+  el.addEventListener('blur',()=>done(true));
+  el.addEventListener('keydown',ev=>{
+    ev.stopPropagation();
+    if(ev.key==='Enter'){ev.preventDefault();done(true);}
+    if(ev.key==='Escape'){ev.preventDefault();done(false);}
+    if(ev.key==='Tab'){ev.preventDefault();done(true).then(()=>{
+      GRID.cur={r,c:Math.min(c+1,cs.length-1)};GRID.sel={r1:r,c1:GRID.cur.c,r2:r,c2:GRID.cur.c};paintSel();});}
+  });
+}
+async function gridKey(e){
+  if(GRID.editing)return;
+  const cs=visCols(), maxR=GRID.rows.length-1, maxC=cs.length-1;
+  const mv=(dr,dc,ext)=>{
+    const r=Math.max(0,Math.min(maxR,GRID.cur.r+dr)), c=Math.max(0,Math.min(maxC,GRID.cur.c+dc));
+    GRID.cur={r,c};
+    GRID.sel=ext&&GRID.sel?{...GRID.sel,r2:r,c2:c}:{r1:r,c1:c,r2:r,c2:c};
+    paintSel();
+    const td=document.querySelector(`td[data-r="${r}"][data-c="${c}"]`);
+    if(td)td.scrollIntoView({block:'nearest',inline:'nearest'});
+  };
+  const k=e.key;
+  if(k==='ArrowDown'){e.preventDefault();mv(1,0,e.shiftKey);}
+  else if(k==='ArrowUp'){e.preventDefault();mv(-1,0,e.shiftKey);}
+  else if(k==='ArrowLeft'){e.preventDefault();mv(0,-1,e.shiftKey);}
+  else if(k==='ArrowRight'||k==='Tab'){e.preventDefault();mv(0,1,e.shiftKey&&k!=='Tab');}
+  else if(k==='Enter'){e.preventDefault();beginEdit(GRID.cur.r,GRID.cur.c);}
+  else if(k==='Delete'||k==='Backspace'){e.preventDefault();await clearSel();}
+  else if((e.ctrlKey||e.metaKey)&&k.toLowerCase()==='c'){e.preventDefault();copySel();}
+  else if((e.ctrlKey||e.metaKey)&&k.toLowerCase()==='a'){e.preventDefault();
+    GRID.sel={r1:0,c1:0,r2:maxR,c2:maxC};paintSel();}
+  else if((e.ctrlKey||e.metaKey)&&k.toLowerCase()==='z'){e.preventDefault();undo();}
+  else if((e.ctrlKey||e.metaKey)&&(k.toLowerCase()==='y'||(e.shiftKey&&k.toLowerCase()==='z'))){e.preventDefault();redo();}
+  else if(k.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+    beginEdit(GRID.cur.r,GRID.cur.c);
+    const el=document.querySelector('.cellin');
+    if(el&&el.tagName==='INPUT'){el.value=k;}
+  }
+}
+function copySel(){
+  const cells=selCells(); if(!cells.length)return;
+  const {r1,r2,c1,c2}=GRID.sel;
+  const [ra,rb]=[Math.min(r1,r2),Math.max(r1,r2)],[ca,cb]=[Math.min(c1,c2),Math.max(c1,c2)];
+  const cs=visCols(), lines=[];
+  for(let r=ra;r<=rb;r++){
+    const row=GRID.rows[r]; if(!row)continue;
+    const cells=[];
+    for(let c=ca;c<=cb;c++){const col=cs[c]; cells.push(col.calc?col.calc(row):(row[col.k]??''));}
+    lines.push(cells.join('\t'));
+  }
+  const txt=lines.join('\r\n');
+  navigator.clipboard.writeText(txt).then(()=>toast(lines.length+' row(s) copied'))
+    .catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
+      ta.select();document.execCommand('copy');ta.remove();toast('Copied');});
+}
+function parseTSV(txt){
+  return txt.replace(/\r\n?/g,'\n').replace(/\n$/,'').split('\n').map(l=>l.split('\t'));
+}
+async function pasteIntoSel(txt){
+  if(!canEdit())return toast(LIVE?'Your account cannot edit':'Read-only snapshot');
+  const data=parseTSV(txt); if(!data.length)return;
+  const cs=visCols(), {r1,c1,r2,c2}=GRID.sel||{r1:0,c1:0,r2:0,c2:0};
+  const ra=Math.min(r1,r2), ca=Math.min(c1,c2);
+  txBegin('paste');
+  let n=0,skipped=0;
+  for(let i=0;i<data.length;i++){
+    const row=GRID.rows[ra+i]; if(!row)break;
+    for(let j=0;j<data[i].length;j++){
+      const col=cs[ca+j]; if(!col)break;
+      if(col.ro){skipped++;continue;}
+      await setCell(row,col.k,data[i][j].trim(),true); n++;
+    }
+  }
+  txEnd(); renderGrid();
+  toast(n+' cell(s) pasted'+(skipped?', '+skipped+' calculated cell(s) skipped':''));
+}
+async function clearSel(){
+  if(!canEdit())return toast(LIVE?'Your account cannot edit':'Read-only snapshot');
+  const cells=selCells().filter(x=>!x.col.ro); if(!cells.length)return;
+  txBegin('clear '+cells.length+' cell(s)');
+  for(const {row,col} of cells) await setCell(row,col.k,'',true);
+  txEnd(); renderGrid(); toast(cells.length+' cell(s) cleared');
+}
+async function addRow(){
+  if(!canEdit())return toast(LIVE?'Your account cannot edit':'Read-only snapshot');
+  const base={projectId:PROJ,sn:String(AB.length+1),docNo:'',title:'',
+    discipline:'',currentRev:'',status:'Not Submitted'};
+  const row=await apiInsert(base);
+  AB.push(row); txPush({t:'add',id:row.id,row:base}); updateUndoBtns();
+  await logAct('add',row); refresh(); toast('Drawing added — fill in the number and name');
+}
+async function deleteSelected(){
+  if(!canEdit())return toast(LIVE?'Your account cannot edit':'Read-only snapshot');
+  const ids=[...new Set(selCells().map(x=>x.row.id))];
+  if(!ids.length)return toast('Select the rows to delete first');
+  msgBox('Delete '+ids.length+' drawing(s)?','🗑',
+    'They will be removed from the register. You can undo this straight afterwards.',
+    [['Cancel',null,''],['Delete',async()=>{
+      txBegin('delete '+ids.length+' row(s)');
+      for(const id of ids){
+        const row=AB.find(r=>r.id===id); if(!row)continue;
+        const copy={...row}; delete copy.id;
+        txPush({t:'del',id,row:copy});
+        AB=AB.filter(r=>r.id!==id); await apiDelete(id); await logAct('delete',row);
+      }
+      txEnd(); refresh(); toast(ids.length+' drawing(s) deleted');
+    },'danger']]);
+}
+document.addEventListener('paste',e=>{
+  if(!GRID||!GRID.win||GRID.editing)return;
+  if(!document.getElementById('gwrap'))return;
+  const t=(e.clipboardData||window.clipboardData).getData('text');
+  if(t){e.preventDefault();pasteIntoSel(t);}
+});
+
+/* ---------------- columns window ---------------- */
+function openCols(){
+  const body=`<div class="hint" style="margin-bottom:10px">
+      Tick what you want on screen. Drag a heading in the register to change the order,
+      or drag its right edge to change the width.</div>
+    ${COLS.map(c=>`<label style="display:flex;gap:9px;align-items:center;padding:5px 2px;cursor:pointer">
+      <input type="checkbox" data-ck="${c.k}" ${PREFS.hidden.includes(c.k)?'':'checked'}
+        ${c.k==='sn'?'disabled':''}> ${esc(c.t)}${c.ro?' <span class="hint">calculated</span>':''}</label>`).join('')}`;
+  const m=msgBox('Choose columns','▤',body,[['Reset',()=>{
+      PREFS.hidden=COLS.filter(c=>c.off).map(c=>c.k);PREFS.w={};savePrefs();renderGrid();},''],
+    ['Done',null,'primary']]);
+  m.querySelectorAll('[data-ck]').forEach(cb=>cb.onchange=()=>{
+    const k=cb.dataset.ck;
+    PREFS.hidden=cb.checked?PREFS.hidden.filter(x=>x!==k):[...PREFS.hidden,k];
+    savePrefs(); renderGrid();});
+}
+
+/* ================= dashboard ================= */
+function stats(){
+  const t=AB.length, sub=AB.filter(submitted).length;
+  return {t,sub,
+    app:AB.filter(r=>APPROVED.includes(r.status)).length,
+    rej:AB.filter(r=>REJECTED.includes(r.status)).length,
+    ur:AB.filter(r=>r.status==='W').length,
+    ns:t-sub};
+}
+function kpiHTML(){
+  const s=stats(), pc=n=>s.t?Math.round(n/s.t*100):0;
+  const tile=(k,v,p,col,f)=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div>
+    <div class="p">${p}</div><div class="bar"><i style="width:${f}%;background:${col}"></i></div></div>`;
+  return tile('In scope',s.t,'as-built drawings','var(--accent)',100)+
+    tile('Submitted',s.sub,pc(s.sub)+'% of scope','var(--accent)',pc(s.sub))+
+    tile('Approved',s.app,'code A, B or I','#0ca30c',pc(s.app))+
+    tile('Under review',s.ur,'code W','#fab219',pc(s.ur))+
+    tile('Needs resubmission',s.rej,'code C or D','#d03b3b',pc(s.rej))+
+    tile('Not submitted',s.ns,pc(s.ns)+'% of scope','#b9b7b0',pc(s.ns));
+}
+
+/* ================= charts =================
+   Hand-rolled SVG so the dashboard still works with no CDN.
+   Every chart is hoverable, and clicking a segment filters the register. */
+
+let TIP=null;
+function tip(){ if(TIP)return TIP;
+  TIP=document.createElement('div');
+  TIP.style.cssText=`position:fixed;z-index:3000;pointer-events:none;opacity:0;transition:opacity .12s;
+    background:var(--ink);color:var(--page1);border-radius:9px;padding:7px 10px;font-size:11.5px;
+    line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.28);max-width:260px`;
+  document.body.appendChild(TIP); return TIP; }
+function showTip(html,x,y){ const t=tip(); t.innerHTML=html; t.style.opacity='1';
+  const r=t.getBoundingClientRect();
+  t.style.left=Math.min(window.innerWidth-r.width-10,Math.max(8,x-r.width/2))+'px';
+  t.style.top=(y-r.height-12<8?y+16:y-r.height-12)+'px'; }
+function hideTip(){ if(TIP)TIP.style.opacity='0'; }
+document.addEventListener('scroll',hideTip,true);
+
+/* jump to the register with a filter applied */
+function drillTo(f){
+  const set=()=>{ Object.assign(GRID,{q:'',fd:'',fs:'',fx:'',...f}); renderGrid(); focusWin(GRID.win.id); };
+  if(MOBILE){ MOB.f=f.fx||''; MOB.q=''; mobTab('reg');
+    if(f.fs){ MOB.f=''; MOB.q=''; MOB.fs=f.fs; } mobRender(); return; }
+  if(!GRID||!WINS.has(GRID.win.id))openRegister();
+  set(); toast('Register filtered');
+}
+
+/* ---------- cumulative curve, with crosshair ---------- */
+function curveChart(id){
+  const sm={},rm={},tm={};
+  AB.forEach(r=>{ if(r.actualSub)sm[r.actualSub.slice(0,7)]=(sm[r.actualSub.slice(0,7)]||0)+1;
+                  if(r.actualRcv)rm[r.actualRcv.slice(0,7)]=(rm[r.actualRcv.slice(0,7)]||0)+1;
+                  if(r.targetDate)tm[r.targetDate.slice(0,7)]=(tm[r.targetDate.slice(0,7)]||0)+1;});
+  const ms=[...new Set([...Object.keys(sm),...Object.keys(rm),...Object.keys(tm)])].sort();
+  if(!ms.length)return '<div class="empty">No dates recorded yet.</div>';
+  let a=0,b=0,c=0; const act=[],rcv=[],pln=[],mo=[];
+  ms.forEach(m=>{a+=sm[m]||0;b+=rm[m]||0;c+=tm[m]||0;act.push(a);rcv.push(b);pln.push(c);
+    mo.push({m,sub:sm[m]||0,rcv:rm[m]||0,tgt:tm[m]||0});});
+  const W=920,H=290,PL=46,PR=18,PT=16,PB=34;
+  const max=Math.ceil(Math.max(AB.length,...pln,...act)/20)*20||20;
+  const X=i=>PL+(W-PL-PR)*(ms.length<2?.5:i/(ms.length-1));
+  const Y=v=>H-PB-(H-PT-PB)*(v/max);
+  const line=arr=>arr.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+  const area=arr=>line(arr)+`L${X(arr.length-1).toFixed(1)} ${Y(0)}L${X(0).toFixed(1)} ${Y(0)}Z`;
+  let g='';
+  for(let i=0;i<=4;i++){const v=max*i/4;
+    g+=`<line class="gl" x1="${PL}" y1="${Y(v)}" x2="${W-PR}" y2="${Y(v)}"/>
+        <text x="${PL-8}" y="${Y(v)+3.5}" text-anchor="end">${Math.round(v)}</text>`;}
+  ms.forEach((m,i)=>{ if(ms.length<14||i%Math.ceil(ms.length/12)===0)
+    g+=`<text x="${X(i)}" y="${H-12}" text-anchor="middle">${m.slice(2).replace('-','/')}</text>`;});
+  const hot=ms.map((m,i)=>`<rect data-i="${i}" x="${i?X(i)-((X(1)-X(0))/2):PL}"
+      y="${PT}" width="${ms.length<2?W-PL-PR:(X(1)-X(0))}" height="${H-PT-PB}" fill="transparent"/>`).join('');
+  const dots=arr=>arr.map((v,i)=>`<circle class="pt" data-i="${i}" cx="${X(i)}" cy="${Y(v)}" r="3.2"/>`).join('');
+  return `<div class="chart" data-chart="curve" style="position:relative">
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
+      <defs><linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="var(--accent)" stop-opacity=".26"/>
+        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+      ${g}
+      <path d="${area(act)}" fill="url(#cg)"/>
+      <path d="${line(pln)}" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4"/>
+      <path d="${line(rcv)}" fill="none" stroke="#0ca30c" stroke-width="2" opacity=".85"/>
+      <path class="draw" d="${line(act)}" fill="none" stroke="var(--accent)" stroke-width="2.8"
+        stroke-linejoin="round" stroke-linecap="round"/>
+      <g fill="var(--accent)" opacity="0">${dots(act)}</g>
+      <line id="cx" x1="0" y1="${PT}" x2="0" y2="${H-PB}" stroke="var(--accent)" stroke-width="1"
+        stroke-dasharray="3 3" opacity="0"/>
+      <g>${hot}</g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>Submitted</span>
+      <span><i style="background:#0ca30c"></i>Returned</span>
+      <span><i class="dash"></i>Planned, by target date</span>
+      <span class="hint" style="margin-left:auto">scope ${AB.length}</span>
+    </div></div>`;
+}
+function wireCurve(root){
+  const box=root.querySelector('[data-chart="curve"]'); if(!box)return;
+  const svg=box.querySelector('svg'), cx=svg.querySelector('#cx');
+  const pts=[...svg.querySelectorAll('.pt')], dotG=svg.querySelector('g[fill="var(--accent)"]');
+  const sm={},rm={},tm={};
+  AB.forEach(r=>{ if(r.actualSub)sm[r.actualSub.slice(0,7)]=(sm[r.actualSub.slice(0,7)]||0)+1;
+                  if(r.actualRcv)rm[r.actualRcv.slice(0,7)]=(rm[r.actualRcv.slice(0,7)]||0)+1;
+                  if(r.targetDate)tm[r.targetDate.slice(0,7)]=(tm[r.targetDate.slice(0,7)]||0)+1;});
+  const ms=[...new Set([...Object.keys(sm),...Object.keys(rm),...Object.keys(tm)])].sort();
+  let a=0,b=0,c=0; const rows=ms.map(m=>{a+=sm[m]||0;b+=rm[m]||0;c+=tm[m]||0;
+    return {m,sub:sm[m]||0,rcv:rm[m]||0,act:a,ret:b,pln:c};});
+  svg.querySelectorAll('rect[data-i]').forEach(r=>{
+    r.style.cursor='pointer';
+    r.addEventListener('pointerenter',e=>{
+      const i=+r.dataset.i, d=rows[i]; if(!d)return;
+      dotG.setAttribute('opacity','1');
+      pts.forEach(p=>p.setAttribute('r',+p.dataset.i===i?'5':'2.6'));
+      const px=+pts[i].getAttribute('cx');
+      cx.setAttribute('x1',px);cx.setAttribute('x2',px);cx.setAttribute('opacity','1');
+      const v=d.act-d.pln;
+      showTip(`<b>${d.m}</b><br>
+        Submitted this month <b>${d.sub}</b><br>
+        Cumulative submitted <b>${d.act}</b><br>
+        Returned <b>${d.ret}</b><br>
+        Planned by now <b>${d.pln}</b><br>
+        <span style="color:${v<0?'#ff9b9b':'#9be89b'}">${v>=0?'+':''}${v} against plan</span>`,
+        e.clientX,e.clientY);
+    });
+    r.addEventListener('pointermove',e=>{const t=tip();
+      if(t.style.opacity==='1'){t.style.left=Math.min(window.innerWidth-t.offsetWidth-10,
+        Math.max(8,e.clientX-t.offsetWidth/2))+'px';
+        t.style.top=(e.clientY-t.offsetHeight-12<8?e.clientY+16:e.clientY-t.offsetHeight-12)+'px';}});
+    r.addEventListener('pointerleave',()=>{hideTip();cx.setAttribute('opacity','0');
+      dotG.setAttribute('opacity','0');pts.forEach(p=>p.setAttribute('r','3.2'));});
+  });
+}
+
+/* ---------- donut, hover + click to filter ---------- */
+function donutChart(){
+  const c={}; AB.forEach(r=>{const k=r.status||'Not Submitted';c[k]=(c[k]||0)+1;});
+  const keys=CODES.filter(k=>c[k]), total=AB.length||1;
+  const R=82,r0=52,CX=100,CY=100; let a0=-Math.PI/2,seg='';
+  const P=(rr,ang)=>[CX+rr*Math.cos(ang),CY+rr*Math.sin(ang)];
+  keys.forEach(k=>{
+    const f=c[k]/total,a1=a0+f*2*Math.PI,big=f>.5?1:0;
+    const[x1,y1]=P(R,a0),[x2,y2]=P(R,a1),[x3,y3]=P(r0,a1),[x4,y4]=P(r0,a0);
+    const mid=(a0+a1)/2;
+    seg+=`<path class="seg" data-k="${esc(k)}" data-mx="${Math.cos(mid).toFixed(3)}"
+      data-my="${Math.sin(mid).toFixed(3)}" style="cursor:pointer;transition:transform .14s"
+      d="M${x1} ${y1}A${R} ${R} 0 ${big} 1 ${x2} ${y2}L${x3} ${y3}A${r0} ${r0} 0 ${big} 0 ${x4} ${y4}Z"
+      fill="${COLOR[k]}"/>`;
+    a0=a1;});
+  const legend=keys.map(k=>`<div class="lrow" data-k="${esc(k)}" style="cursor:pointer">
+     <i style="background:${COLOR[k]}"></i><span>${esc(k)}</span>
+     <b>${c[k]}</b><span class="hint">${Math.round(c[k]/total*100)}%</span></div>`).join('');
+  return `<div class="chart" data-chart="donut" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+    <svg viewBox="0 0 200 200" style="width:200px;flex:none;overflow:visible">${seg}
+      <text id="dnum" x="100" y="97" text-anchor="middle"
+        style="font-size:27px;font-weight:700;fill:var(--ink)">${AB.length}</text>
+      <text id="dlab" x="100" y="116" text-anchor="middle" style="font-size:10px">in scope</text></svg>
+    <div style="flex:1;min-width:180px" class="legendlist">${legend}</div></div>`;
+}
+function wireDonut(root){
+  const box=root.querySelector('[data-chart="donut"]'); if(!box)return;
+  const num=box.querySelector('#dnum'), lab=box.querySelector('#dlab');
+  const total=AB.length||1;
+  const enter=(k,el,e)=>{
+    const n=AB.filter(r=>(r.status||'Not Submitted')===k).length;
+    num.textContent=n; lab.textContent=k==='Not Submitted'?'not submitted':'code '+k;
+    box.querySelectorAll('.seg').forEach(s=>{
+      const on=s.dataset.k===k;
+      s.style.opacity=on?'1':'.35';
+      s.style.transform=on?`translate(${s.dataset.mx*5}px,${s.dataset.my*5}px)`:'none';});
+    box.querySelectorAll('.lrow').forEach(l=>l.style.opacity=l.dataset.k===k?'1':'.45');
+    if(e)showTip(`<b>${esc(k)}</b><br>${n} drawing${n===1?'':'s'} · ${Math.round(n/total*100)}% of scope
+      <br><span class="hint" style="color:var(--muted)">click to filter</span>`,e.clientX,e.clientY);
+  };
+  const leave=()=>{ num.textContent=AB.length; lab.textContent='in scope'; hideTip();
+    box.querySelectorAll('.seg').forEach(s=>{s.style.opacity='1';s.style.transform='none';});
+    box.querySelectorAll('.lrow').forEach(l=>l.style.opacity='1');};
+  box.querySelectorAll('.seg,.lrow').forEach(el=>{
+    el.addEventListener('pointerenter',e=>enter(el.dataset.k,el,e));
+    el.addEventListener('pointermove',e=>{const t=tip();if(t.style.opacity==='1'){
+      t.style.left=Math.min(window.innerWidth-t.offsetWidth-10,Math.max(8,e.clientX-t.offsetWidth/2))+'px';
+      t.style.top=(e.clientY-t.offsetHeight-12<8?e.clientY+16:e.clientY-t.offsetHeight-12)+'px';}});
+    el.addEventListener('pointerleave',leave);
+    el.addEventListener('click',()=>drillTo({fs:el.dataset.k}));
+  });
+}
+
+/* ---------- discipline stacked bars ---------- */
+function disciplineChart(){
+  const ds=[...new Set(AB.map(r=>r.discipline))].filter(Boolean)
+    .map(d=>({d,n:AB.filter(r=>r.discipline===d).length})).sort((a,b)=>b.n-a.n);
+  if(!ds.length)return '<div class="empty">No disciplines recorded.</div>';
+  const max=ds[0].n;
+  return `<div class="chart" data-chart="disc">${ds.map(({d,n})=>{
+    const parts=CODES.map(k=>({k,v:AB.filter(r=>r.discipline===d&&(r.status||'Not Submitted')===k).length}))
+      .filter(p=>p.v);
+    const app=AB.filter(r=>r.discipline===d&&APPROVED.includes(r.status)).length;
+    return `<div class="drow">
+      <div class="dlab" title="${esc(d)}">${esc(d)}</div>
+      <div class="dbar" style="width:${n/max*100}%">${parts.map(p=>
+        `<i class="dseg" data-d="${esc(d)}" data-k="${esc(p.k)}" data-v="${p.v}"
+           style="width:${p.v/n*100}%;background:${COLOR[p.k]}"></i>`).join('')}</div>
+      <div class="dn">${n}</div>
+      <div class="dp" title="approved">${Math.round(app/n*100)}%</div></div>`;}).join('')}
+    <div class="legend" style="margin-top:10px">${CODES.map(k=>
+      `<span><i style="background:${COLOR[k]}"></i>${k==='Not Submitted'?'Not sub.':k}</span>`).join('')}</div>
+    </div>`;
+}
+function wireDisc(root){
+  const box=root.querySelector('[data-chart="disc"]'); if(!box)return;
+  box.querySelectorAll('.dseg').forEach(s=>{
+    s.style.cursor='pointer';
+    s.addEventListener('pointerenter',e=>{
+      box.querySelectorAll('.dseg').forEach(o=>o.style.opacity='.35'); s.style.opacity='1';
+      showTip(`<b>${esc(s.dataset.d)}</b><br>${esc(s.dataset.k)} — <b>${s.dataset.v}</b> drawing${
+        s.dataset.v==='1'?'':'s'}<br><span style="color:var(--muted)">click to filter</span>`,
+        e.clientX,e.clientY);});
+    s.addEventListener('pointerleave',()=>{hideTip();
+      box.querySelectorAll('.dseg').forEach(o=>o.style.opacity='1');});
+    s.addEventListener('click',()=>drillTo({fd:s.dataset.d,fs:s.dataset.k}));
+  });
+}
+
+/* ---------- ageing histogram ---------- */
+function ageingChart(){
+  const ur=AB.filter(r=>r.status==='W'&&r.actualSub).map(r=>({...r,age:days(r.actualSub,today)}))
+    .sort((a,b)=>b.age-a.age);
+  if(!ur.length)return '<div class="empty">Nothing is with the reviewer.</div>';
+  const B=[['0–14',0,14,'#0ca30c'],['15–30',15,30,'#fab219'],['31–60',31,60,'#ec835a'],['60+',61,1e9,'#d03b3b']];
+  const counts=B.map(([l,lo,hi])=>ur.filter(r=>r.age>=lo&&r.age<=hi).length);
+  const max=Math.max(...counts)||1;
+  return `<div class="chart" data-chart="age">
+    <div class="bars">${B.map(([l,lo,hi,col],i)=>`
+      <div class="bcol" data-lo="${lo}" data-hi="${hi}" data-l="${l}" data-n="${counts[i]}">
+        <div class="bval">${counts[i]||''}</div>
+        <div class="btr"><i style="height:${counts[i]/max*100}%;background:${col}"></i></div>
+        <div class="blab">${l}</div></div>`).join('')}</div>
+    <div class="hint" style="margin-top:8px;display:flex;gap:14px;flex-wrap:wrap">
+      <span>Days waiting since submission</span>
+      <span style="margin-left:auto">Longest <b>${ur[0].age}d</b> — ${esc(ur[0].docNo)}</span></div></div>`;
+}
+function wireAge(root){
+  const box=root.querySelector('[data-chart="age"]'); if(!box)return;
+  const ur=AB.filter(r=>r.status==='W'&&r.actualSub).map(r=>({...r,age:days(r.actualSub,today)}));
+  box.querySelectorAll('.bcol').forEach(b=>{
+    b.style.cursor='pointer';
+    b.addEventListener('pointerenter',e=>{
+      const lo=+b.dataset.lo,hi=+b.dataset.hi;
+      const list=ur.filter(r=>r.age>=lo&&r.age<=hi).sort((x,y)=>y.age-x.age).slice(0,5);
+      showTip(`<b>${b.dataset.l} days</b> — ${b.dataset.n} drawing${b.dataset.n==='1'?'':'s'}${
+        list.length?'<br>'+list.map(r=>`${esc(r.docNo||'—')} <span style="opacity:.7">${r.age}d</span>`).join('<br>'):''}
+        <br><span style="color:var(--muted)">click to see them all</span>`,e.clientX,e.clientY);});
+    b.addEventListener('pointerleave',hideTip);
+    b.addEventListener('click',()=>drillTo({fx:'ur'}));
+  });
+}
+
+/* ---------- monthly throughput ---------- */
+function throughputChart(){
+  const sm={},rm={};
+  AB.forEach(r=>{ if(r.actualSub)sm[r.actualSub.slice(0,7)]=(sm[r.actualSub.slice(0,7)]||0)+1;
+                  if(r.actualRcv)rm[r.actualRcv.slice(0,7)]=(rm[r.actualRcv.slice(0,7)]||0)+1;});
+  const ms=[...new Set([...Object.keys(sm),...Object.keys(rm)])].sort();
+  if(!ms.length)return '<div class="empty">Nothing submitted yet.</div>';
+  const max=Math.max(...ms.map(m=>Math.max(sm[m]||0,rm[m]||0)))||1;
+  return `<div class="chart" data-chart="thr">
+    <div class="bars">${ms.map(m=>`
+      <div class="bcol" data-m="${m}" data-s="${sm[m]||0}" data-r="${rm[m]||0}">
+        <div class="bval">${sm[m]||0}</div>
+        <div class="btr pair">
+          <i style="height:${(sm[m]||0)/max*100}%;background:var(--accent)"></i>
+          <i style="height:${(rm[m]||0)/max*100}%;background:#0ca30c"></i></div>
+        <div class="blab">${m.slice(2).replace('-','/')}</div></div>`).join('')}</div>
+    <div class="legend" style="margin-top:8px">
+      <span><i style="background:var(--accent)"></i>Submitted</span>
+      <span><i style="background:#0ca30c"></i>Returned by the reviewer</span></div></div>`;
+}
+function wireThr(root){
+  const box=root.querySelector('[data-chart="thr"]'); if(!box)return;
+  box.querySelectorAll('.bcol').forEach(b=>{
+    b.addEventListener('pointerenter',e=>showTip(
+      `<b>${b.dataset.m}</b><br>Submitted <b>${b.dataset.s}</b><br>Returned <b>${b.dataset.r}</b>`,
+      e.clientX,e.clientY));
+    b.addEventListener('pointerleave',hideTip);
+  });
+}
+
+function wireCharts(root){ wireCurve(root);wireDonut(root);wireDisc(root);wireAge(root);wireThr(root); }
+
+function matrixHTML(){
+  const ds=[...new Set(AB.map(r=>r.discipline))].filter(Boolean).sort();
+  const cell=(d,k)=>AB.filter(r=>r.discipline===d&&(r.status||'Not Submitted')===k).length;
+  const rows=ds.map(d=>{
+    const cs=CODES.map(k=>cell(d,k)),tot=cs.reduce((a,b)=>a+b,0);
+    const app=AB.filter(r=>r.discipline===d&&APPROVED.includes(r.status)).length;
+    return `<tr><td>${esc(d)}</td>${cs.map(n=>`<td style="text-align:center">${n||'—'}</td>`).join('')}
+      <td style="text-align:right"><b>${tot}</b></td><td style="text-align:right">${tot?Math.round(app/tot*100):0}%</td></tr>`;}).join('');
+  const tot=CODES.map(k=>AB.filter(r=>(r.status||'Not Submitted')===k).length),s=stats();
+  return `<table><thead><tr><th>Discipline</th>${CODES.map(k=>
+      `<th style="text-align:center">${k==='Not Submitted'?'Not sub.':k}</th>`).join('')}
+      <th style="text-align:right">Total</th><th style="text-align:right">Approved</th></tr></thead>
+    <tbody>${rows}<tr style="font-weight:650;background:var(--surface)">
+      <td>All disciplines</td>${tot.map(n=>`<td style="text-align:center">${n}</td>`).join('')}
+      <td style="text-align:right">${s.t}</td><td style="text-align:right">${s.t?Math.round(s.app/s.t*100):0}%</td></tr></tbody></table>`;
+}
+function overdueHTML(limit){
+  const od=AB.filter(r=>!APPROVED.includes(r.status)&&r.targetDate&&r.targetDate<today)
+    .map(r=>({...r,late:days(r.targetDate,today)})).sort((a,b)=>b.late-a.late);
+  if(!od.length)return '<div class="empty">Nothing is past its target date.</div>';
+  const where=r=>r.status==='W'?'With the reviewer':REJECTED.includes(r.status)?'Needs resubmission':'Not submitted';
+  return `<table><thead><tr><th>Drawing</th><th>Name</th><th>Discipline</th><th>Target</th>
+    <th style="text-align:right">Days late</th><th>Sitting with</th></tr></thead><tbody>`+
+    od.slice(0,limit||20).map(r=>`<tr><td>${esc(r.docNo)||'<span class="hint">no number yet</span>'}</td>
+      <td>${esc(r.title)}</td><td>${esc(r.discipline)}</td><td>${esc(r.targetDate)}</td>
+      <td style="text-align:right;color:var(--critical);font-weight:600">${r.late}</td>
+      <td>${where(r)}</td></tr>`).join('')+`</tbody></table>`+
+    (od.length>(limit||20)?`<div class="hint" style="padding:7px">Showing the ${limit||20} latest of ${od.length}.</div>`:'');
+}
+function openDashboard(){
+  const w=createWindow('dash','Dashboard','as-built progress',null,null,980,660);
+  renderDash(); return w;
+}
+function renderDash(){
+  const w=[...WINS.values()].find(x=>x.kind==='dash'); if(!w)return;
+  w.body.innerHTML=`<div class="dash">
+    <div class="kpis">${kpiHTML()}</div>
+    <div class="panel"><h3>Submission curve — cumulative</h3>${curveChart()}</div>
+    <div class="g2">
+      <div class="panel"><h3>Review codes</h3>${donutChart()}</div>
+      <div class="panel"><h3>Under review — how long they have been sitting</h3>${ageingChart()}</div>
+    </div>
+    <div class="panel"><h3>Submitted and returned each month</h3>${throughputChart()}</div>
+    <div class="panel"><h3>Discipline against review code</h3>${disciplineChart()}</div>
+    <div class="panel"><h3>Past target date, not yet closed out</h3>${overdueHTML(20)}</div></div>`;
+  wireCharts(w.body);
+}
+function refresh(){ if(GRID&&GRID.win&&WINS.has(GRID.win.id))renderGrid(); renderDash(); renderDock();
+  updateUndoBtns(); updateBell(); if(MOBILE)mobRender(); }
+
+/* ================= excel ================= */
+function ensureXLSX(){return new Promise((res,rej)=>{
+  if(window.XLSX)return res(window.XLSX);
+  const s=document.createElement('script');s.src=XLSX_CDN;
+  s.onload=()=>res(window.XLSX);s.onerror=()=>rej(new Error('no xlsx'));document.head.appendChild(s);});}
+function tableAOA(){
+  const cs=visCols(), rows=GRID?GRID.rows:AB;
+  return [cs.map(c=>c.t)].concat(rows.map(r=>cs.map(c=>c.calc?c.calc(r):(r[c.k]??''))));
+}
+async function exportXLSX(){
+  try{
+    const X=await ensureXLSX();
+    const ws=X.utils.aoa_to_sheet(tableAOA());
+    ws['!cols']=visCols().map(c=>({wpx:colW(c)}));
+    const wb=X.utils.book_new(); X.utils.book_append_sheet(wb,ws,'As-Builts');
+    X.writeFile(wb,'IWTP2_AsBuilts_'+today+'.xlsx');
+    toast('Excel file downloaded');
+  }catch(e){ toast('Could not load the Excel library — CSV works offline'); exportCSV(); }
+}
+function exportCSV(){
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const csv=tableAOA().map(r=>r.map(q).join(',')).join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));
+  a.download='IWTP2_AsBuilts_'+today+'.csv';a.click();
+  toast('CSV downloaded');
+}
+function importExcel(){
+  if(!canEdit())return toast(LIVE?'Your account cannot edit':'Read-only snapshot');
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.xlsx,.xls,.csv';
+  inp.onchange=async()=>{
+    const f=inp.files[0]; if(!f)return;
+    try{
+      const X=await ensureXLSX();
+      const wb=X.read(await f.arrayBuffer(),{type:'array'});
+      const aoa=X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,defval:''});
+      if(aoa.length<2)return toast('That sheet looks empty');
+      const head=aoa[0].map(h=>String(h).trim().toLowerCase());
+      const map=head.map(h=>{const c=COLS.find(c=>c.t.toLowerCase()===h||c.k.toLowerCase()===h);
+        return c&&!c.ro?c.k:null;});
+      if(!map.some(Boolean))return msgBox('Import from Excel','⤒',
+        'None of the headings matched. Use the same headings as the register — '+
+        'export it first if you want a template.',[['Close',null,'primary']]);
+      const dn=map.indexOf('docNo');
+      msgBox('Import '+(aoa.length-1)+' row(s)?','⤒',
+        `Matching on <b>Drawing number</b>: rows that already exist are updated, new numbers are added.
+         Columns matched: ${map.filter(Boolean).map(k=>esc(COLBY[k].t)).join(', ')}.`,
+        [['Cancel',null,''],['Import',async()=>{
+          txBegin('import '+(aoa.length-1)+' row(s)');
+          let upd=0,add=0;
+          for(let i=1;i<aoa.length;i++){
+            const line=aoa[i]; if(!line.join('').trim())continue;
+            const no=dn>=0?String(line[dn]||'').trim():'';
+            let row=no?AB.find(r=>r.docNo===no):null;
+            if(!row){
+              const base={projectId:PROJ,sn:String(AB.length+1),docNo:no,title:'',
+                discipline:'',currentRev:'',status:'Not Submitted'};
+              row=await apiInsert(base); AB.push(row); txPush({t:'add',id:row.id,row:base}); add++;
+            } else upd++;
+            for(let j=0;j<map.length;j++){
+              if(!map[j])continue;
+              const v=String(line[j]??'').trim(); if(v==='')continue;
+              await setCell(row,map[j],v,true);
+            }
+          }
+          txEnd(); refresh(); toast(add+' added, '+upd+' updated');
+        },'primary']]);
+    }catch(e){ console.error(e); toast('Could not read that file'); }
+  };
+  inp.click();
+}
+
+/* ================= activity & people ================= */
+async function openActivity(){
+  const w=createWindow('act','Activity log','every change, newest first',null,null,760,520);
+  w.body.innerHTML='<div class="dash"><div class="hint">Loading…</div></div>';
+  if(LIVE){ try{ ACTS=await api('activity?projectId=eq.'+PROJ+'&order=id.desc&limit=400'); }catch(e){} }
+  w.body.innerHTML=`<div class="dash"><div class="panel">
+    ${ACTS.length?`<table><thead><tr><th>When</th><th>Who</th><th>Drawing</th><th>Field</th><th>From</th><th>To</th></tr></thead>
+    <tbody>${ACTS.map(a=>`<tr><td class="hint">${esc((a.ts||'').replace('T',' ').slice(0,16))}</td>
+      <td>${esc(a.actor||'—')}</td><td>${esc(a.recName||'—')}</td><td>${esc(COLBY[a.field]?COLBY[a.field].t:a.field)}</td>
+      <td class="hint">${esc((a.oldVal||'').slice(0,40))||'—'}</td><td>${esc((a.newVal||'').slice(0,40))||'—'}</td></tr>`).join('')}
+    </tbody></table>`:'<div class="empty">No changes recorded yet.</div>'}</div></div>`;
+}
+async function openUsers(){
+  if(!canAdmin())return toast('Only an administrator can manage access');
+  const w=createWindow('usr','People and access','who can see and change what',null,null,620,420);
+  let list=[]; try{ list=await api('users?order=id.asc'); }catch(e){}
+  w.body.innerHTML=`<div class="dash"><div class="panel">
+    <table><thead><tr><th>Name</th><th>Username</th><th>Role</th></tr></thead><tbody>
+    ${list.map(u=>`<tr><td>${esc(u.name)}</td><td class="hint">${esc(u.username)}</td>
+      <td><select class="f" data-u="${u.id}">${['admin','editor','viewer'].map(r=>
+        `<option${u.role===r?' selected':''}>${r}</option>`).join('')}</select></td></tr>`).join('')}
+    </tbody></table>
+    <div class="hint" style="margin-top:10px">
+      An <b>administrator</b> manages access and everything below it.
+      An <b>editor</b> changes the register. A <b>viewer</b> can look but not change.</div></div></div>`;
+  w.body.querySelectorAll('[data-u]').forEach(s=>s.onchange=async()=>{
+    try{ await api('users?id=eq.'+s.dataset.u,{method:'PATCH',body:JSON.stringify({role:s.value})});
+      toast('Role updated'); }catch(e){ toast('Not saved'); }});
+}
+function updateBell(){
+  const n=NOTIFS.filter(x=>x.read!=='Yes').length;
+  [['belln',n],['mbelln',n]].forEach(([id,v])=>{
+    const el=document.getElementById(id); if(!el)return;
+    el.textContent=v||''; el.style.display=v?'':'none';});
+}
+async function openNotifs(){
+  const w=createWindow('ntf','Notifications','',null,null,520,420);
+  if(LIVE){ try{ NOTIFS=await api('notifs?projectId=eq.'+PROJ+'&order=id.desc&limit=100'); }catch(e){} }
+  w.body.innerHTML=`<div class="dash"><div class="panel">${
+    NOTIFS.length?NOTIFS.map(n=>`<div class="mrow"><div><b>${esc(n.title)}</b>
+      <div class="hint">${esc(n.body||'')}</div></div>
+      <div class="hint">${esc((n.ts||'').slice(0,10))}</div></div>`).join('')
+    :'<div class="empty">Nothing needs your attention.</div>'}</div></div>`;
+  if(LIVE&&NOTIFS.some(n=>n.read!=='Yes')){
+    try{ await api('notifs?projectId=eq.'+PROJ,{method:'PATCH',body:JSON.stringify({read:'Yes'})});
+      NOTIFS.forEach(n=>n.read='Yes'); updateBell(); }catch(e){}
+  }
+}
+
+/* ================= mobile shell ================= */
+const MOB={view:'dash',id:null,stack:[],q:'',f:'',fs:''};
+function isPhone(){
+  if(location.hash==='#mobile')return true;
+  if(location.hash==='#desktop')return false;
+  if(/Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent||''))return true;
+  const coarse=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches;
+  if(coarse&&window.innerWidth<1100)return true;
+  return !!(window.matchMedia&&window.matchMedia('(max-width: 820px)').matches);
+}
+function setMobile(on,remember){
+  MOBILE=!!on;
+  document.body.classList.toggle('mobile',MOBILE);
+  if(remember){try{location.hash=MOBILE?'mobile':'desktop';}catch(e){}}
+  if(MOBILE){MOB.stack=[];mobRender();}
+  else{ if(!WINS.size&&USER){openRegister();openDashboard();} }
+}
+function checkMode(){ const p=isPhone(); if(p!==MOBILE)setMobile(p,false); }
+function mobGo(view,id){MOB.stack.push({view:MOB.view,id:MOB.id,q:MOB.q,f:MOB.f});
+  MOB.view=view;MOB.id=id;MOB.q='';mobRender();}
+function mobBack(){const p=MOB.stack.pop();if(!p)return;Object.assign(MOB,p);mobRender();}
+function mobTab(v){MOB.stack=[];MOB.view=v;MOB.id=null;MOB.q='';MOB.f='';MOB.fs='';
+  const b=document.getElementById('mbody');if(b)b.scrollTop=0;mobRender();}
+function mobRender(){
+  if(!MOBILE)return;
+  const T={dash:'Dashboard',reg:'Register',one:'Drawing',late:'Past target',more:'More'};
+  let ttl=T[MOB.view]||'As-Builts', sub='IWTP2';
+  if(MOB.view==='one'){const r=AB.find(x=>x.id===MOB.id);
+    ttl=r?(r.docNo||'New drawing'):'Drawing'; sub=r?(r.discipline||''):'';}
+  document.getElementById('mtitle').textContent=ttl;
+  document.getElementById('msub').textContent=sub;
+  document.getElementById('mback').style.visibility=MOB.stack.length?'visible':'hidden';
+  const tabs=[['dash','◔','Dashboard'],['reg','▦','Register'],['late','⚑','Past target'],['more','⋯','More']];
+  document.getElementById('mtabs').innerHTML=tabs.map(([v,i,l])=>
+    `<button class="${MOB.view===v||(v==='reg'&&MOB.view==='one')?'on':''}" data-mt="${v}"><b>${i}</b>${l}</button>`).join('');
+  document.getElementById('mtabs').querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>mobTab(b.dataset.mt));
+  const V={dash:mobDash,reg:mobList,one:mobOne,late:mobLate,more:mobMore};
+  document.getElementById('mbody').innerHTML=(V[MOB.view]||mobDash)();
+  wireMob(); wireCharts(document.getElementById('mbody')); updateBell();
+}
+const offBar=()=>LIVE?'':`<div class="offbar"><b>Saved snapshot.</b> This copy cannot reach the
+  database, so the figures are as at 14 Aug 2026 and editing is off.</div>`;
+function mobDash(){
+  const s=stats(),pc=n=>s.t?Math.round(n/s.t*100):0;
+  const t=(k,v,p,c,f)=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div>
+    <div class="p">${p}</div><div class="bar"><i style="width:${f}%;background:${c}"></i></div></div>`;
+  return offBar()+`<div class="mkpi">
+      ${t('In scope',s.t,'drawings','var(--accent)',100)}
+      ${t('Submitted',s.sub,pc(s.sub)+'%','var(--accent)',pc(s.sub))}
+      ${t('Approved',s.app,'A, B or I','#0ca30c',pc(s.app))}
+      ${t('Under review',s.ur,'code W','#fab219',pc(s.ur))}
+      ${t('Resubmit',s.rej,'C or D','#d03b3b',pc(s.rej))}
+      ${t('Not submitted',s.ns,pc(s.ns)+'%','#b9b7b0',pc(s.ns))}</div>
+    <div class="panel"><h3>Submission curve</h3>${curveChart()}</div>
+    <div class="panel"><h3>Review codes</h3>${donutChart()}</div>
+    <div class="panel"><h3>Under review</h3>${ageingChart()}</div>
+    <div class="panel"><h3>Submitted and returned each month</h3>${throughputChart()}</div>
+    <div class="panel"><h3>Discipline against code</h3>${disciplineChart()}</div>`;
+}
+function mobFilters(){
+  const F=[['','All'],['open','Open'],['ur','Under review'],['late','Past target'],['ns','Not submitted']];
+  return `<div class="mfilt">${F.map(([v,l])=>
+    `<button class="${MOB.f===v?'on':''}" data-mf="${v}">${l}</button>`).join('')}</div>`;
+}
+function mobRows(){
+  const q=MOB.q.toLowerCase();
+  return AB.filter(r=>{
+    if(q&&!((r.docNo||'')+' '+(r.title||'')).toLowerCase().includes(q))return false;
+    if(MOB.f==='open'&&!isOpen(r))return false;
+    if(MOB.f==='ur'&&r.status!=='W')return false;
+    if(MOB.f==='ns'&&r.status!=='Not Submitted')return false;
+    if(MOB.fs&&(r.status||'Not Submitted')!==MOB.fs)return false;
+    if(MOB.f==='late'&&!(!APPROVED.includes(r.status)&&r.targetDate&&r.targetDate<today))return false;
+    return true;});
+}
+function card(r){
+  const k=r.status||'Not Submitted';
+  const late=(!APPROVED.includes(r.status)&&r.targetDate&&r.targetDate<today)?days(r.targetDate,today):0;
+  return `<div class="mcard" data-mo="${r.id}">
+    <div class="r1"><span class="no">${esc(r.docNo)||'no number yet'}</span>
+      <span class="pill ${k==='Not Submitted'?'s-N':'s-'+k}">${esc(k==='Not Submitted'?'Not sub.':k)}</span></div>
+    <div class="ti">${esc(r.title)||'<span style="color:var(--muted);font-weight:400">Untitled</span>'}</div>
+    <div class="m"><span>${esc(r.discipline)||'—'}</span>${r.currentRev?`<span>Rev ${esc(r.currentRev)}</span>`:''}
+      ${r.actualSub?`<span>Sent ${esc(r.actualSub)}</span>`:''}
+      ${late?`<span style="color:var(--critical)">${late}d late</span>`:''}</div></div>`;
+}
+function mobList(){
+  const rows=mobRows();
+  return offBar()+`<input class="f" id="msearch" placeholder="Search number or name" value="${esc(MOB.q)}">
+    ${mobFilters()}
+    <div class="hint" style="margin-bottom:8px">${rows.length} of ${AB.length} drawings</div>
+    ${rows.length?rows.map(card).join(''):'<div class="empty">Nothing matches that.</div>'}`;
+}
+function mobLate(){
+  const rows=AB.filter(r=>!APPROVED.includes(r.status)&&r.targetDate&&r.targetDate<today)
+    .map(r=>({...r,late:days(r.targetDate,today)})).sort((a,b)=>b.late-a.late);
+  return offBar()+`<div class="hint" style="margin-bottom:8px">${rows.length} past their target date</div>`+
+    (rows.length?rows.map(card).join(''):'<div class="empty">Nothing is past its target date.</div>');
+}
+function mobOne(){
+  const r=AB.find(x=>x.id===MOB.id); if(!r)return '<div class="empty">That drawing has gone.</div>';
+  const show=COLS.filter(c=>!c.ro||c.calc);
+  return `<div class="mcard">${show.map(c=>{
+      const v=c.calc?c.calc(r):(r[c.k]??'');
+      if(c.calc&&!v)return '';
+      return `<div class="mrow ${c.ro?'':'tap'}" ${c.ro?'':`data-me="${c.k}"`}>
+        <span class="l">${esc(c.t)}</span>
+        <span class="v">${c.pill?cellText(r,c):(esc(v)||'<span style="color:var(--muted)">—</span>')}
+        ${c.ro?'':'<span class="hint"> ›</span>'}</span></div>`;}).join('')}</div>
+    ${canEdit()?`<button class="btn danger" id="mdel" style="width:100%;padding:11px;margin-top:6px">Delete this drawing</button>`:''}`;
+}
+function mobMore(){
+  return `<div class="mcard">
+    <div class="mrow"><span class="l">Signed in as</span><span class="v">${esc(USER?USER.name:'—')}</span></div>
+    <div class="mrow"><span class="l">Access</span><span class="v">${esc(USER?USER.role:'—')}</span></div>
+    <div class="mrow"><span class="l">Connection</span><span class="v">${LIVE?'Live':'Snapshot, read-only'}</span></div>
+    <div class="mrow"><span class="l">Drawings</span><span class="v">${AB.length}</span></div></div>
+    <div class="mcard">
+    <div class="mrow tap" data-mm="csv"><span class="l">Export to CSV</span><span class="v">›</span></div>
+    <div class="mrow tap" data-mm="xlsx"><span class="l">Export to Excel</span><span class="v">›</span></div>
+    <div class="mrow tap" data-mm="theme"><span class="l">Light or dark</span><span class="v">›</span></div>
+    <div class="mrow tap" data-mm="desktop"><span class="l">Switch to the full layout</span><span class="v">›</span></div>
+    <div class="mrow tap" data-mm="logout"><span class="l">Sign out</span><span class="v">›</span></div></div>`;
+}
+function wireMob(){
+  const b=document.getElementById('mbody');
+  b.querySelectorAll('[data-mo]').forEach(el=>el.onclick=()=>mobGo('one',+el.dataset.mo));
+  b.querySelectorAll('[data-mf]').forEach(el=>el.onclick=()=>{MOB.f=el.dataset.mf;mobRender();});
+  const s=document.getElementById('msearch');
+  if(s)s.oninput=()=>{MOB.q=s.value;const p=s.selectionStart;mobRender();
+    const n=document.getElementById('msearch');if(n){n.focus();n.setSelectionRange(p,p);}};
+  b.querySelectorAll('[data-me]').forEach(el=>el.onclick=()=>mobEdit(el.dataset.me));
+  const d=document.getElementById('mdel');
+  if(d)d.onclick=()=>{const r=AB.find(x=>x.id===MOB.id);
+    msgBox('Delete '+(r.docNo||'this drawing')+'?','🗑','It will be removed from the register.',
+      [['Cancel',null,''],['Delete',async()=>{
+        const copy={...r};delete copy.id;
+        txPush({t:'del',id:r.id,row:copy});
+        AB=AB.filter(x=>x.id!==r.id);await apiDelete(r.id);await logAct('delete',r);
+        mobBack();refresh();toast('Deleted');},'danger']]);};
+  b.querySelectorAll('[data-mm]').forEach(el=>el.onclick=()=>{
+    const a=el.dataset.mm;
+    if(a==='csv')exportCSV(); else if(a==='xlsx')exportXLSX();
+    else if(a==='theme')toggleTheme();
+    else if(a==='desktop')setMobile(false,true);
+    else if(a==='logout')logout();});
+}
+function mobEdit(k){
+  const c=COLBY[k], r=AB.find(x=>x.id===MOB.id); if(!c||!r)return;
+  if(!canEdit())return toast(LIVE?'Your account cannot edit':'Read-only snapshot');
+  const cur=r[k]??'';
+  const field=c.opts
+    ? `<select class="f" id="mev" style="width:100%;padding:10px;font-size:15px">${
+        c.opts().map(o=>`<option${String(cur)===String(o)?' selected':''}>${esc(o)||'—'}</option>`).join('')}</select>`
+    : `<input class="f" id="mev" type="${c.date?'date':'text'}" value="${esc(cur)}"
+        style="width:100%;padding:10px;font-size:15px">`;
+  msgBox(c.t,'✎',field,[['Cancel',null,''],['Save',async()=>{
+    const v=document.getElementById('mev')?document.getElementById('mev').value:cur;
+    await setCell(r,k,v); mobRender();},'primary']]);
+  setTimeout(()=>{const el=document.getElementById('mev');if(el)el.focus();},40);
+}
+
+/* ================= auth & boot ================= */
+function toggleTheme(){
+  const d=document.documentElement.dataset.theme==='dark';
+  document.documentElement.dataset.theme=d?'':'dark';
+  try{localStorage.setItem('ab-theme',d?'light':'dark');}catch(e){}
+  refresh();
+}
+function logout(){
+  USER=null; try{localStorage.removeItem('ab-user');}catch(e){}
+  [...WINS.keys()].forEach(closeWin);
+  document.getElementById('login').classList.add('on');
+}
+async function doLogin(){
+  const u=document.getElementById('lu').value.trim(), p=document.getElementById('lp').value;
+  const err=document.getElementById('lerr');
+  if(!LIVE){
+    USER={name:'Guest',username:'guest',role:'viewer'};
+    err.innerHTML='<span class="hint">No connection — opening the read-only snapshot.</span>';
+    return setTimeout(startApp,500);
+  }
+  try{
+    const list=await api('users?username=eq.'+encodeURIComponent(u)+'&limit=1');
+    if(!list.length||list[0].password!==p){
+      err.innerHTML='<span style="color:var(--critical);font-size:12px">That username and password do not match.</span>';
+      return;
+    }
+    USER=list[0];
+    try{localStorage.setItem('ab-user',JSON.stringify(USER));}catch(e){}
+    startApp();
+  }catch(e){ err.innerHTML='<span style="color:var(--critical);font-size:12px">Could not reach the database.</span>'; }
+}
+function startApp(){
+  document.getElementById('login').classList.remove('on');
+  document.getElementById('projsub').textContent='IWTP2'+(USER?' · '+USER.name:'');
+  MOBILE=isPhone(); document.body.classList.toggle('mobile',MOBILE);
+  if(MOBILE)mobRender();
+  else{ openRegister(); openDashboard();
+    const d=[...WINS.values()].find(w=>w.kind==='dash');
+    if(d){d.x=Math.max(20,desk().clientWidth-d.w-20);d.y=16;applyRect(d);}
+    focusWin([...WINS.values()].find(w=>w.kind==='reg').id); }
+  updateUndoBtns(); updateBell(); renderDock();
+}
+async function boot(){
+  try{ if(localStorage.getItem('ab-theme')==='dark')document.documentElement.dataset.theme='dark'; }catch(e){}
+  loadPrefs();
+  try{
+    const [ab,pr]=await Promise.all([
+      api('asbuilts?projectId=eq.'+PROJ+'&order=sn.asc&limit=2000'),
+      api('projects?id=eq.'+PROJ+'&limit=1')]);
+    AB=ab; LIVE=true;
+    if(pr[0]&&pr[0].colprefs)loadPrefs(pr[0].colprefs);
+    try{ NOTIFS=await api('notifs?projectId=eq.'+PROJ+'&order=id.desc&limit=100'); }catch(e){}
+  }catch(e){
+    console.warn('Database unreachable — using the built-in snapshot.',e);
+    AB=SNAPSHOT.map(r=>({...r})); LIVE=false;
+  }
+  if(!LIVE){ USER={name:'Guest',username:'guest',role:'viewer'}; startApp(); return; }
+  let saved=null; try{ saved=JSON.parse(localStorage.getItem('ab-user')||'null'); }catch(e){}
+  if(saved){ USER=saved; startApp(); }
+  else{ document.getElementById('login').classList.add('on');
+        setTimeout(()=>{const el=document.getElementById('lu');if(el)el.focus();},60); }
+}
+
+/* topbar wiring */
+document.getElementById('b-reg').onclick=()=>{if(GRID&&WINS.has(GRID.win.id))focusWin(GRID.win.id);else openRegister();};
+document.getElementById('b-dash').onclick=openDashboard;
+document.getElementById('b-undo').onclick=undo;
+document.getElementById('b-redo').onclick=redo;
+document.getElementById('b-bell').onclick=openNotifs;
+document.getElementById('mbell').onclick=()=>{
+  msgBox('Notifications','🔔',NOTIFS.length?NOTIFS.map(n=>
+    `<div class="mrow"><div><b>${esc(n.title)}</b><div class="hint">${esc(n.body||'')}</div></div></div>`).join('')
+    :'<div class="empty">Nothing needs your attention.</div>',[['Close',null,'primary']]);};
+document.getElementById('mback').onclick=mobBack;
+document.getElementById('lgo').onclick=doLogin;
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+const menu=document.getElementById('menu');
+document.getElementById('b-menu').onclick=e=>{e.stopPropagation();menu.classList.toggle('open');};
+document.addEventListener('click',()=>menu.classList.remove('open'));
+menu.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
+  menu.classList.remove('open');
+  const a=b.dataset.a;
+  if(a==='cols')openCols(); else if(a==='xlsx')exportXLSX(); else if(a==='csv')exportCSV();
+  else if(a==='import')importExcel(); else if(a==='activity')openActivity();
+  else if(a==='users')openUsers(); else if(a==='arrange')arrangeWins();
+  else if(a==='theme')toggleTheme(); else if(a==='mobile')setMobile(true,true);
+  else if(a==='logout')logout();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.getElementById('msgwrap').classList.contains('on'))closeMsg();
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!GRID?.editing&&e.target===document.body){e.preventDefault();undo();}
+});
+window.addEventListener('hashchange',()=>setMobile(isPhone(),false));
+boot();
+
+</script>
+</body>
+</html>
