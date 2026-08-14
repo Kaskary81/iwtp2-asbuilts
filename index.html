@@ -248,6 +248,10 @@ body.mobile{overflow:hidden}
 .mrow .v{text-align:right;word-break:break-word}
 .mrow.tap{cursor:pointer}
 .mrow.tap:active{background:var(--accent-soft)}
+.applied{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.applied span{background:var(--accent);color:#fff;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600}
+.applied button{margin-left:auto;border:1px solid var(--ring);background:var(--surface);color:var(--ink2);
+  border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer}
 .mfilt{display:flex;gap:7px;overflow-x:auto;padding-bottom:10px;margin-bottom:2px}
 .mfilt button{border:1px solid var(--ring);background:var(--surface);color:var(--ink2);
   border-radius:20px;padding:5px 13px;font-size:12px;white-space:nowrap;cursor:pointer;flex:none}
@@ -937,11 +941,16 @@ document.addEventListener('scroll',hideTip,true);
 
 /* jump to the register with a filter applied */
 function drillTo(f){
-  const set=()=>{ Object.assign(GRID,{q:'',fd:'',fs:'',fx:'',...f}); renderGrid(); focusWin(GRID.win.id); };
-  if(MOBILE){ MOB.f=f.fx||''; MOB.q=''; mobTab('reg');
-    if(f.fs){ MOB.f=''; MOB.q=''; MOB.fs=f.fs; } mobRender(); return; }
+  if(MOBILE){
+    MOB.stack=[]; MOB.view='reg'; MOB.id=null; MOB.q='';
+    MOB.f=f.fx||''; MOB.fs=f.fs||''; MOB.fd=f.fd||'';
+    const b=document.getElementById('mbody'); if(b)b.scrollTop=0;
+    mobRender(); return;
+  }
   if(!GRID||!WINS.has(GRID.win.id))openRegister();
-  set(); toast('Register filtered');
+  Object.assign(GRID,{q:'',fd:'',fs:'',fx:'',...f});
+  renderGrid(); focusWin(GRID.win.id);
+  toast('Showing '+[f.fd,f.fs&&('code '+f.fs)].filter(Boolean).join(' · ')||'Register filtered');
 }
 
 /* ---------- cumulative curve, with crosshair ---------- */
@@ -1357,7 +1366,7 @@ async function openNotifs(){
 }
 
 /* ================= mobile shell ================= */
-const MOB={view:'dash',id:null,stack:[],q:'',f:'',fs:''};
+const MOB={view:'dash',id:null,stack:[],q:'',f:'',fs:'',fd:''};
 function isPhone(){
   if(location.hash==='#mobile')return true;
   if(location.hash==='#desktop')return false;
@@ -1377,7 +1386,7 @@ function checkMode(){ const p=isPhone(); if(p!==MOBILE)setMobile(p,false); }
 function mobGo(view,id){MOB.stack.push({view:MOB.view,id:MOB.id,q:MOB.q,f:MOB.f});
   MOB.view=view;MOB.id=id;MOB.q='';mobRender();}
 function mobBack(){const p=MOB.stack.pop();if(!p)return;Object.assign(MOB,p);mobRender();}
-function mobTab(v){MOB.stack=[];MOB.view=v;MOB.id=null;MOB.q='';MOB.f='';MOB.fs='';
+function mobTab(v){MOB.stack=[];MOB.view=v;MOB.id=null;MOB.q='';MOB.f='';MOB.fs='';MOB.fd='';
   const b=document.getElementById('mbody');if(b)b.scrollTop=0;mobRender();}
 function mobRender(){
   if(!MOBILE)return;
@@ -1428,6 +1437,7 @@ function mobRows(){
     if(MOB.f==='ur'&&r.status!=='W')return false;
     if(MOB.f==='ns'&&r.status!=='Not Submitted')return false;
     if(MOB.fs&&(r.status||'Not Submitted')!==MOB.fs)return false;
+    if(MOB.fd&&r.discipline!==MOB.fd)return false;
     if(MOB.f==='late'&&!(!APPROVED.includes(r.status)&&r.targetDate&&r.targetDate<today))return false;
     return true;});
 }
@@ -1444,8 +1454,12 @@ function card(r){
 }
 function mobList(){
   const rows=mobRows();
+  const chips=[MOB.fd,MOB.fs&&('Code '+MOB.fs)].filter(Boolean);
+  const applied=chips.length?`<div class="applied">
+      <span>${chips.map(esc).join('</span><span>')}</span>
+      <button id="mclear">Clear</button></div>`:'';
   return offBar()+`<input class="f" id="msearch" placeholder="Search number or name" value="${esc(MOB.q)}">
-    ${mobFilters()}
+    ${applied}${mobFilters()}
     <div class="hint" style="margin-bottom:8px">${rows.length} of ${AB.length} drawings</div>
     ${rows.length?rows.map(card).join(''):'<div class="empty">Nothing matches that.</div>'}`;
 }
@@ -1483,7 +1497,10 @@ function mobMore(){
 function wireMob(){
   const b=document.getElementById('mbody');
   b.querySelectorAll('[data-mo]').forEach(el=>el.onclick=()=>mobGo('one',+el.dataset.mo));
-  b.querySelectorAll('[data-mf]').forEach(el=>el.onclick=()=>{MOB.f=el.dataset.mf;mobRender();});
+  b.querySelectorAll('[data-mf]').forEach(el=>el.onclick=()=>{
+    MOB.f=el.dataset.mf;MOB.fs='';MOB.fd='';mobRender();});
+  const mc=document.getElementById('mclear');
+  if(mc)mc.onclick=()=>{MOB.fs='';MOB.fd='';MOB.f='';MOB.q='';mobRender();};
   const s=document.getElementById('msearch');
   if(s)s.oninput=()=>{MOB.q=s.value;const p=s.selectionStart;mobRender();
     const n=document.getElementById('msearch');if(n){n.focus();n.setSelectionRange(p,p);}};
