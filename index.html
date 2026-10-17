@@ -3020,7 +3020,12 @@ function chAge(S,W){
 function chThr(S,W){
   const D=S.months.filter(d=>d.sub||d.rcv), H=250;
   if(!D.length)return {h:40,svg:chT(0,20,'Nothing submitted yet.',{fill:CH.mute})};
-  const PL=40,PR=12,PT=14,PB=40, max=Math.max(...D.map(d=>Math.max(d.sub,d.rcv)))||1;
+  const PL=40,PR=12,PT=14,PB=40;
+  /* round the top of the axis up to something that divides into four whole
+     numbers, so the gridline labels read 0/30/60/90/120 rather than 0/27/53/80 */
+  const peak=Math.max(...D.map(d=>Math.max(d.sub,d.rcv)))||1;
+  const tick=[1,2,5,10,20,25,50,100,200,250,500,1000].find(s=>s*4>=peak)||Math.ceil(peak/4);
+  const max=tick*4;
   const bw=(W-PL-PR)/D.length, iw=Math.min(16,(bw-8)/2);
   const Y=v=>H-PB-(H-PT-PB)*(v/max);
   let g='';
